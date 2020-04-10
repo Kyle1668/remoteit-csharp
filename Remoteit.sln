@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Remoteit", "Remoteit\Remoteit.csproj", "{138A6076-D42E-4551-AABE-E6DBB30FD6A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Remoteit.Test", "Remoteit.Test\Remoteit.Test.csproj", "{E5507C11-5169-4537-89E1-9D2234951DAC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{138A6076-D42E-4551-AABE-E6DBB30FD6A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{138A6076-D42E-4551-AABE-E6DBB30FD6A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{138A6076-D42E-4551-AABE-E6DBB30FD6A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{138A6076-D42E-4551-AABE-E6DBB30FD6A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5507C11-5169-4537-89E1-9D2234951DAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5507C11-5169-4537-89E1-9D2234951DAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5507C11-5169-4537-89E1-9D2234951DAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5507C11-5169-4537-89E1-9D2234951DAC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B928DE62-EE83-4C15-8AA7-CA25891D1195}
+	EndGlobalSection
+EndGlobal
