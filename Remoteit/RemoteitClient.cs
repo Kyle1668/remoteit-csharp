@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Authentication;
+using System.Text.Json;
 
 namespace Remoteit
 {
@@ -40,13 +41,13 @@ namespace Remoteit
                 { "password", _userPassword }
             };
 
-            var rawJsonRequestBody = new StringContent(JsonConvert.SerializeObject(requestBody));
+            var rawJsonRequestBody = new StringContent(JsonSerializer.Serialize(requestBody));
 
             try
             {
                 HttpResponseMessage response = await _httpApiClient.PostAsync(apiEndpoint, rawJsonRequestBody);
                 var responseBody = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<RemoteitApiSession>(responseBody);
+                return JsonSerializer.Deserialize<RemoteitApiSession>(responseBody);
             }
             catch (HttpRequestException apiRequestError)
             {

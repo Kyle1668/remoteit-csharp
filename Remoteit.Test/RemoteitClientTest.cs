@@ -9,7 +9,7 @@ namespace Remoteit.Test
         public void AuthenticateSuccessfully()
         {
             // Mock 200 Response from API. Should not throw excpetion.
-            var testClient = new RemoteitClient("c9xNsPKT7Yo5xHNj", "kyle1668", "foo");
+            var testClient = new RemoteitClient().Connect("c9xNsPKT7Yo5xHNj", "kyle1668", "foo");
 
             Assert.Equal("c9xNsPKT7Yo5xHNj", testClient.DeveloperKey);
             Assert.Equal("kyle1668", testClient.UserName);
