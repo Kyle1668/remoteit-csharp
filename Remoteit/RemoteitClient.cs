@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json;
-using Remoteit.Models;
+﻿using Remoteit.Models;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Authentication;
-using System.Text.Json;
 
 namespace Remoteit
 {
