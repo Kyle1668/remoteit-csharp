@@ -1,57 +1,33 @@
 ﻿using Remoteit.Models;
 using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Security.Authentication;
 
 namespace Remoteit
 {
-    public class RemoteitClient
+    public class RemoteitClient : IRemoteitClient
     {
-        private static readonly HttpClient _httpApiClient = new HttpClient()
-        {
-            BaseAddress = new System.Uri("https://api.remot3.it/apv/v27/")
-        };
+        public HttpClient HttpApiClient { get; }
 
-        public readonly IEnumerable<char> DeveloperKey;
+        public IEnumerable<char> DeveloperKey { get; }
 
-        public readonly IEnumerable<char> UserName;
+        private IEnumerable<char> _userName { get; }
 
-        private readonly IEnumerable<char> _userPassword;
+        private IEnumerable<char> _userPassword { get; }
 
         private RemoteitApiSession _currentSession;
 
-        public RemoteitClient(IEnumerable<char> developerKey, IEnumerable<char> userName, IEnumerable<char> password)
+        private bool _invalidSession
         {
-            DeveloperKey = developerKey;
-            UserName = userName;
-            _userPassword = password;
-            _httpApiClient.DefaultRequestHeaders.Add("developerkey", developerKey.ToString());
+            get { return _currentSession == null || _currentSession.SessionHasExpired(); }
         }
 
-        private async Task<RemoteitApiSession> AuthenticateToApi()
+        public RemoteitClient(IEnumerable<char> userName, IEnumerable<char> password, IEnumerable<char> developerKey, HttpClient requestClient)
         {
-            var apiEndpoint = string.Concat(_httpApiClient.BaseAddress, "device/connect");
+            _userName = userName;
+            _userPassword = password;
 
-            var requestBody = new Dictionary<string, IEnumerable<char>>()
-            {
-                { "username", UserName },
-                { "password", _userPassword }
-            };
-
-            var rawJsonRequestBody = new StringContent(JsonSerializer.Serialize(requestBody));
-
-            try
-            {
-                HttpResponseMessage response = await _httpApiClient.PostAsync(apiEndpoint, rawJsonRequestBody);
-                var responseBody = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<RemoteitApiSession>(responseBody);
-            }
-            catch (HttpRequestException apiRequestError)
-            {
-                throw new AuthenticationException(apiRequestError.Message);
-            }
+            DeveloperKey = developerKey;
+            HttpApiClient = requestClient;
         }
     }
 }
