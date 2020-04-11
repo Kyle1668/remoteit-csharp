@@ -18,7 +18,7 @@ namespace Remoteit.Test
         }
 
         [Fact]
-        public void TestPublicMemberInitWithoutProvidedHttpClient()
+        public void TestPublicMemberInitWithoutProvidingHttpClient()
         {
             var testClient = new RemoteitClient("kyle1668", "foo", "c9xNsPKT7Yo5xHNj");
             var internalDefaultHttpClient = new HttpClient() { BaseAddress = new System.Uri("https://api.remot3.it/apv/v27") };

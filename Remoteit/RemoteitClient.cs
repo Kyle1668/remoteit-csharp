@@ -1,7 +1,7 @@
-﻿using Remoteit.Models;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Remoteit.RestApi;
 
 namespace Remoteit
 {

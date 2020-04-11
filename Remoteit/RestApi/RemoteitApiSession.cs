@@ -2,9 +2,9 @@
 using System.Collections;
 using System;
 
-namespace Remoteit.Models
+namespace Remoteit.RestApi
 {
-    internal class RemoteitApiSession
+    public class RemoteitApiSession
     {
         [JsonPropertyName("status")]
         public bool Status { get; }
