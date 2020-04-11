@@ -1,6 +1,7 @@
 ﻿using Remoteit.Models;
 using System.Net.Http;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Remoteit
 {
@@ -21,13 +22,20 @@ namespace Remoteit
             get { return _currentSession == null || _currentSession.SessionHasExpired(); }
         }
 
-        public RemoteitClient(IEnumerable<char> userName, IEnumerable<char> password, IEnumerable<char> developerKey, HttpClient requestClient)
+        public RemoteitClient(IEnumerable<char> userName, IEnumerable<char> password, IEnumerable<char> developerKey, HttpClient requestClient = null)
         {
             _userName = userName;
             _userPassword = password;
-
             DeveloperKey = developerKey;
-            HttpApiClient = requestClient;
+
+            if (requestClient == null)
+            {
+                HttpApiClient = new HttpClient() { BaseAddress = new System.Uri("https://api.remot3.it/apv/v27") };
+            }
+            else
+            {
+                HttpApiClient = requestClient;
+            }
         }
     }
 }
