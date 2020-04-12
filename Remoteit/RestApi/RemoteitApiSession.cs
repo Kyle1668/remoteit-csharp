@@ -1,8 +1,9 @@
 ﻿using System.Text.Json.Serialization;
+using System.Runtime.CompilerServices;
 using System.Collections;
 using Remoteit.Util;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Remoteit.Test")]
+[assembly: InternalsVisibleTo("Remoteit.Test")]
 
 namespace Remoteit.RestApi
 {
