@@ -2,7 +2,7 @@
 
 namespace Remoteit.Util
 {
-    public class UnixTimeStampCalculator : IUnixTimeStampCalculator
+    internal class UnixTimeStampCalculator : IUnixTimeStampCalculator
     {
         public long Calculate()
         {
