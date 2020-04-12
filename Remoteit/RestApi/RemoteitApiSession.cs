@@ -2,9 +2,11 @@
 using System.Collections;
 using Remoteit.Util;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Remoteit.Test")]
+
 namespace Remoteit.RestApi
 {
-    public class RemoteitApiSession
+    internal class RemoteitApiSession
     {
         private IUnixTimeStampCalculator _timeCalculator;
 

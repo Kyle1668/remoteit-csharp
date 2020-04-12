@@ -20,7 +20,7 @@ namespace Remoteit.Test.RestApi
         }
 
         [Fact]
-        public void TestSessionNotxpiredCalculation()
+        public void TestSessionNotExpiredCalculation()
         {
             var mockTimer = new Mock<IUnixTimeStampCalculator>();
             mockTimer.Setup(x => x.Calculate()).Returns(1587100798);
