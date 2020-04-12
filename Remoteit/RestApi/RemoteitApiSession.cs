@@ -1,11 +1,18 @@
 ﻿using System.Text.Json.Serialization;
 using System.Collections;
-using System;
+using Remoteit.Util;
 
 namespace Remoteit.RestApi
 {
     public class RemoteitApiSession
     {
+        private IUnixTimeStampCalculator _timeCalculator;
+
+        public RemoteitApiSession(IUnixTimeStampCalculator timeCalculator)
+        {
+            _timeCalculator = timeCalculator;
+        }
+
         [JsonPropertyName("status")]
         public bool Status { get; }
 
@@ -83,7 +90,8 @@ namespace Remoteit.RestApi
 
         public bool SessionHasExpired()
         {
-            return TokenExpirationDate <= DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            //return TokenExpirationDate <= DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            return TokenExpirationDate <= _timeCalculator.Calculate();
         }
     }
 }

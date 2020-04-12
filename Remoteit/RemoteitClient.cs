@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Remoteit.Util;
 using Remoteit.RestApi;
 
 namespace Remoteit
@@ -36,6 +37,8 @@ namespace Remoteit
             {
                 HttpApiClient = requestClient;
             }
+
+            // _currentSession = new RemoteitApiSession(new UnixTimeStampCalculator());
         }
     }
 }
