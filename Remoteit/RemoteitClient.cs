@@ -16,7 +16,7 @@ namespace Remoteit
 
         private IEnumerable<char> _userPassword { get; }
 
-        private RemoteitApiSession _currentSession;
+        private RemoteitApiSessionManager _currentSession;
 
         private bool _invalidSession
         {

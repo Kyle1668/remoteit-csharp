@@ -3,19 +3,10 @@ using System.Runtime.CompilerServices;
 using System.Collections;
 using Remoteit.Util;
 
-[assembly: InternalsVisibleTo("Remoteit.Test")]
-
 namespace Remoteit.RestApi
 {
     internal class RemoteitApiSession
     {
-        private IUnixTimeStampCalculator _timeCalculator;
-
-        public RemoteitApiSession(IUnixTimeStampCalculator timeCalculator)
-        {
-            _timeCalculator = timeCalculator;
-        }
-
         [JsonPropertyName("status")]
         public bool Status { get; set; }
 
@@ -90,11 +81,5 @@ namespace Remoteit.RestApi
 
         [JsonPropertyName("aws_identity")]
         public string AwsIdentity { get; set; }
-
-        public bool SessionHasExpired()
-        {
-            //return TokenExpirationDate <= DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            return TokenExpirationDate <= _timeCalculator.Calculate();
-        }
     }
 }
