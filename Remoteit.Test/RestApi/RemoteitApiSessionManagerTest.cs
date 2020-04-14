@@ -2,6 +2,7 @@
 using Moq;
 using Remoteit.RestApi;
 using Remoteit.Util;
+using Remoteit.Models;
 using System.Net.Http;
 using System;
 
@@ -29,8 +30,13 @@ namespace Remoteit.Test.RestApi
             var mockTimer = new Mock<IUnixTimeStampCalculator>();
             mockTimer.Setup(x => x.Calculate()).Returns(1587257611);
 
-            var testSession = new RemoteitApiSessionManager(mockTimer.Object, new HttpClient());
-            testSession.CurrentSessionData.TokenExpirationDate = 1587100798;
+            var testSession = new RemoteitApiSessionManager(mockTimer.Object, new HttpClient())
+            {
+                CurrentSessionData = new RemoteitApiSession()
+                {
+                    TokenExpirationDate = 1587100798
+                }
+            };
 
             Assert.True(testSession.SessionHasExpired());
         }
@@ -41,8 +47,13 @@ namespace Remoteit.Test.RestApi
             var mockTimer = new Mock<IUnixTimeStampCalculator>();
             mockTimer.Setup(x => x.Calculate()).Returns(1587100798);
 
-            var testSession = new RemoteitApiSessionManager(mockTimer.Object, new HttpClient());
-            testSession.CurrentSessionData.TokenExpirationDate = 1587257611;
+            var testSession = new RemoteitApiSessionManager(mockTimer.Object, new HttpClient())
+            {
+                CurrentSessionData = new RemoteitApiSession()
+                {
+                    TokenExpirationDate = 1587257611
+                }
+            };
 
             Assert.False(testSession.SessionHasExpired());
         }
@@ -53,6 +64,7 @@ namespace Remoteit.Test.RestApi
             // Test the following
             // 1. That the http request is sent once with the correct arguments.
             // 2. That CurrentSessionData has changed. Lazy way could be to check if the token is different?
+            throw new NotImplementedException();
         }
 
         [Fact]
@@ -60,6 +72,7 @@ namespace Remoteit.Test.RestApi
         {
             // Test the following
             // 1. If the API returns a non-200 response, throw an Unable to authenticate exception.
+            throw new NotImplementedException();
         }
     }
 }
