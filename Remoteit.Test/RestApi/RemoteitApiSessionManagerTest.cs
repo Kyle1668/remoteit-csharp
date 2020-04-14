@@ -10,6 +10,8 @@ using Moq.Protected;
 using System.Threading;
 using System.Net;
 using System.Security.Authentication;
+using System.Text.Json;
+using System.Collections.Generic;
 
 namespace Remoteit.Test.RestApi
 {
@@ -99,14 +101,19 @@ namespace Remoteit.Test.RestApi
 
             Assert.Equal("4c7aa09820a05364487c1300a5887f89", testSession.CurrentSessionData.Token);
             Assert.Equal("1587257611", testSession.CurrentSessionData.TokenExpirationDate.ToString());
+
+            var requestBody = new Dictionary<string, IEnumerable<char>>()
+            {
+                { "username", "kyle" },
+                { "password", "incorrect_developer_key" }
+            };
+
+            var rawJsonRequestBody = new StringContent(JsonSerializer.Serialize(requestBody));
         }
 
         [Fact]
         public async Task TestHandlingUnableToCreateNewSession()
         {
-            // Test the following
-            // 1. If the API returns a non-200 response, throw an Unable to authenticate exception.
-
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             var testResponse = new HttpResponseMessage()
             {
