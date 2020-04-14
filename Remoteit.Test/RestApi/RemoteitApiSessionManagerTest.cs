@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Moq.Protected;
 using System.Threading;
 using System.Net;
+using System.Security.Authentication;
 
 namespace Remoteit.Test.RestApi
 {
@@ -94,19 +95,44 @@ namespace Remoteit.Test.RestApi
                 }
             };
 
-            await testSession.GenerateSession("kyle", "foo");
+            await testSession.GenerateSession("kyle", "incorrect_developer_key");
 
             Assert.Equal("4c7aa09820a05364487c1300a5887f89", testSession.CurrentSessionData.Token);
             Assert.Equal("1587257611", testSession.CurrentSessionData.TokenExpirationDate.ToString());
         }
 
         [Fact]
-        public void TestHandlingUnableToCreateNewSession()
+        public async Task TestHandlingUnableToCreateNewSession()
         {
             // Test the following
             // 1. If the API returns a non-200 response, throw an Unable to authenticate exception.
 
-            throw new NotImplementedException();
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var testResponse = new HttpResponseMessage()
+            {
+                StatusCode = HttpStatusCode.Unauthorized,
+                Content = new StringContent("{  \"status\": \"false\",  \"reason\": \"api key failed validation\",  \"code\": \"GENERAL_ERROR\"}")
+            };
+
+            mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>
+            (
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            .ReturnsAsync(testResponse)
+            .Verifiable();
+
+            var testHttpClient = new HttpClient(mockHttpMessageHandler.Object) { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
+            var testSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), testHttpClient)
+            {
+                CurrentSessionData = new RemoteitApiSession()
+                {
+                    TokenExpirationDate = 1587257611
+                }
+            };
+
+            await Assert.ThrowsAsync<AuthenticationException>(() => testSession.GenerateSession("kyle", "incorrect_developer_key"));
         }
     }
 }

@@ -2,6 +2,7 @@
 using Remoteit.Util;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Security.Authentication;
@@ -41,6 +42,12 @@ namespace Remoteit.RestApi
             try
             {
                 HttpResponseMessage response = await _httpApiClient.PostAsync(apiEndpoint, rawJsonRequestBody);
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    throw new AuthenticationException();
+                }
+
                 var responseBody = await response.Content.ReadAsStringAsync();
                 CurrentSessionData = JsonSerializer.Deserialize<RemoteitApiSession>(responseBody);
                 return CurrentSessionData;
