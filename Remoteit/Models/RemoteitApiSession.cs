@@ -6,7 +6,7 @@ namespace Remoteit.Models
     internal class RemoteitApiSession
     {
         [JsonPropertyName("status")]
-        public bool Status { get; set; }
+        public string Status { get; set; }
 
         [JsonPropertyName("token")]
         public string Token { get; set; }
@@ -72,7 +72,7 @@ namespace Remoteit.Models
         public string MemberSince { get; set; }
 
         [JsonPropertyName("index")]
-        public bool Index { get; set; }
+        public string Index { get; set; }
 
         [JsonPropertyName("pubsub_channel")]
         public string PubsubChannel { get; set; }

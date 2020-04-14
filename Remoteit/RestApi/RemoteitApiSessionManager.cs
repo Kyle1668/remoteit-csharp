@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Security.Authentication;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("Remoteit.Test")]
 
@@ -25,7 +26,7 @@ namespace Remoteit.RestApi
             _httpApiClient = httpClient;
         }
 
-        public async void GenerateSession(string userName, string userPassword)
+        public async Task<RemoteitApiSession> GenerateSession(string userName, string userPassword)
         {
             var apiEndpoint = string.Concat(_httpApiClient.BaseAddress, "device/connect");
 
@@ -42,6 +43,7 @@ namespace Remoteit.RestApi
                 HttpResponseMessage response = await _httpApiClient.PostAsync(apiEndpoint, rawJsonRequestBody);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 CurrentSessionData = JsonSerializer.Deserialize<RemoteitApiSession>(responseBody);
+                return CurrentSessionData;
             }
             catch (HttpRequestException apiRequestError)
             {
