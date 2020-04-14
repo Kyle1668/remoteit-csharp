@@ -1,5 +1,6 @@
 ﻿using Remoteit.Models;
 using Remoteit.Util;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -50,6 +51,11 @@ namespace Remoteit.RestApi
 
         public bool SessionHasExpired()
         {
+            if (CurrentSessionData == null)
+            {
+                throw new InvalidOperationException("Unable to check is the session has expired since there is no current session.");
+            }
+
             return CurrentSessionData.TokenExpirationDate <= _timeCalculator.Calculate();
         }
     }
