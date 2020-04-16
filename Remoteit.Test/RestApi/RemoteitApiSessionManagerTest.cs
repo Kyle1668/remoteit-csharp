@@ -95,10 +95,6 @@ namespace Remoteit.Test.RestApi
             // Execute the SUT: Attempt to create a new session.
             await testSession.GenerateSession("kyle", "incorrect_developer_key");
 
-            // Test that the new token and expiration for the session manager is the same as the API response's.
-            Assert.Equal("4c7aa09820a05364487c1300a5887f89", testSession.CurrentSessionData.Token);
-            Assert.Equal("1587257611", testSession.CurrentSessionData.TokenExpirationDate.ToString());
-
             // Verify that the request made to the remote.it API was only made once and was the correct method.
             mockHttpMessageHandler.Protected().Verify(
                 "SendAsync",
@@ -106,6 +102,10 @@ namespace Remoteit.Test.RestApi
                 ItExpr.Is<HttpRequestMessage>(req => req.Method == expectedHttpMethod && req.RequestUri == expectedApiEndpointUri),
                 ItExpr.IsAny<CancellationToken>()
             );
+
+            // Test that the new token and expiration for the session manager is the same as the API response's.
+            Assert.Equal("4c7aa09820a05364487c1300a5887f89", testSession.CurrentSessionData.Token);
+            Assert.Equal("1587257611", testSession.CurrentSessionData.TokenExpirationDate.ToString());
         }
 
         [Fact]

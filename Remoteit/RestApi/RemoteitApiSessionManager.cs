@@ -41,16 +41,7 @@ namespace Remoteit.RestApi
 
             try
             {
-                var request = new HttpRequestMessage()
-                {
-                    Content = rawJsonRequestBody,
-                    Method = HttpMethod.Post,
-                    RequestUri = apiEndpoint
-                };
-
-                HttpResponseMessage response = await _httpApiClient.SendAsync(request);
-
-                //HttpResponseMessage response = await _httpApiClient.PostAsync(apiEndpoint, rawJsonRequestBody);
+                HttpResponseMessage response = await _httpApiClient.PostAsync(apiEndpoint, rawJsonRequestBody);
 
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
