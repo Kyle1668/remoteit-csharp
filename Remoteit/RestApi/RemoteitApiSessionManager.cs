@@ -29,7 +29,7 @@ namespace Remoteit.RestApi
 
         public async Task<RemoteitApiSession> GenerateSession(string userName, string userPassword)
         {
-            var apiEndpoint = string.Concat(_httpApiClient.BaseAddress, "device/connect");
+            var apiEndpoint = new Uri(string.Concat(_httpApiClient.BaseAddress.OriginalString, "/device/connect"));
 
             var requestBody = new Dictionary<string, IEnumerable<char>>()
             {
@@ -41,7 +41,16 @@ namespace Remoteit.RestApi
 
             try
             {
-                HttpResponseMessage response = await _httpApiClient.PostAsync(apiEndpoint, rawJsonRequestBody);
+                var request = new HttpRequestMessage()
+                {
+                    Content = rawJsonRequestBody,
+                    Method = HttpMethod.Post,
+                    RequestUri = apiEndpoint
+                };
+
+                HttpResponseMessage response = await _httpApiClient.SendAsync(request);
+
+                //HttpResponseMessage response = await _httpApiClient.PostAsync(apiEndpoint, rawJsonRequestBody);
 
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
