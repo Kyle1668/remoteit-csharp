@@ -19,6 +19,9 @@ namespace Remoteit.RestApi
 
         private HttpClient _httpApiClient { get; }
 
+        /// <summary>
+        /// The data for the current API session. Includes the access token used for request authentication.
+        /// </summary>
         public RemoteitApiSession CurrentSessionData { get; set; }
 
         public RemoteitApiSessionManager(IUnixTimeStampCalculator timeCalculator, HttpClient httpClient)
@@ -27,9 +30,16 @@ namespace Remoteit.RestApi
             _httpApiClient = httpClient;
         }
 
+        /// <summary>
+        /// Creates a API session by retreiving a new access token from the "/device/connect" API endpoint.
+        /// https://docs.remote.it/api-reference/authentication
+        /// </summary>
+        /// <param name="userName">E-mail for remote.it(or for legacy users, your username)</param>
+        /// <param name="userPassword">Password for remote.it</param>
+        /// <returns>A new RemoteitApiSession instance</returns>
         public async Task<RemoteitApiSession> GenerateSession(string userName, string userPassword)
         {
-            var apiEndpoint = new Uri(string.Concat(_httpApiClient.BaseAddress.OriginalString, "/device/connect"));
+            var apiEndpoint = new Uri(string.Concat(_httpApiClient.BaseAddress, "/device/connect"));
 
             var requestBody = new Dictionary<string, IEnumerable<char>>()
             {
@@ -58,6 +68,10 @@ namespace Remoteit.RestApi
             }
         }
 
+        /// <summary>
+        /// Compares the current Unix time and the session expiration date to determine wether the current token/session has expired.
+        /// </summary>
+        /// <returns>Wether the session has expires or not.</returns>
         public bool SessionHasExpired()
         {
             if (CurrentSessionData == null)

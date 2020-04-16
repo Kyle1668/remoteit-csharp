@@ -6,10 +6,19 @@ using Remoteit.RestApi;
 
 namespace Remoteit
 {
+    /// <summary>
+    /// Provides an
+    /// </summary>
     public class RemoteitClient : IRemoteitClient
     {
+        /// <summary>
+        /// The Http client used to facilitate requests to the remote.it REST API.
+        /// </summary>
         public HttpClient HttpApiClient { get; }
 
+        /// <summary>
+        /// Required for authentication.  Your developer key which can be found by logging into remote.it and going to your Account settings page.
+        /// </summary>
         public IEnumerable<char> DeveloperKey { get; }
 
         private IEnumerable<char> _userName { get; }
@@ -38,7 +47,7 @@ namespace Remoteit
                 HttpApiClient = requestClient;
             }
 
-            // _currentSession = new RemoteitApiSession(new UnixTimeStampCalculator());
+            _currentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), HttpApiClient);
         }
     }
 }
