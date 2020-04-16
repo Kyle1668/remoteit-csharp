@@ -7,7 +7,7 @@ using Remoteit.RestApi;
 namespace Remoteit
 {
     /// <summary>
-    /// Provides an
+    /// Provides an interface to programmatically list and connect to your remote.it devices.
     /// </summary>
     public class RemoteitClient : IRemoteitClient
     {
