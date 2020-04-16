@@ -1,6 +1,5 @@
-﻿using Xunit;
-using System.Security.Authentication;
-using System.Net.Http;
+﻿using System.Net.Http;
+using Xunit;
 
 namespace Remoteit.Test
 {
@@ -8,6 +7,9 @@ namespace Remoteit.Test
     {
         private readonly HttpClient testHttpClient = new HttpClient();
 
+        /// <summary>
+        /// Tests initialization of public members without dependency injection.
+        /// </summary>
         [Fact]
         public void TestPublicMemberInitWithProvidedHttpClient()
         {
@@ -17,6 +19,9 @@ namespace Remoteit.Test
             Assert.Equal(testHttpClient, testClient.HttpApiClient);
         }
 
+        /// <summary>
+        /// Tests initialization of public members with dependency injection.
+        /// </summary>
         [Fact]
         public void TestPublicMemberInitWithoutProvidingHttpClient()
         {
