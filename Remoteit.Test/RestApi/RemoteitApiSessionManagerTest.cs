@@ -90,13 +90,7 @@ namespace Remoteit.Test.RestApi
 
             // Create a test HttpClient that uses the mocked HttpMessageHandler. Creates instance of SUT.
             var testHttpClient = new HttpClient(mockHttpMessageHandler.Object) { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
-            var testSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), testHttpClient)
-            {
-                CurrentSessionData = new RemoteitApiSession()
-                {
-                    TokenExpirationDate = 1587257611
-                }
-            };
+            var testSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), testHttpClient);
 
             // Execute the SUT: Attempt to create a new session.
             await testSession.GenerateSession("kyle", "incorrect_developer_key");
