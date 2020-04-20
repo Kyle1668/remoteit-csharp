@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Remoteit.Util;
 using Remoteit.RestApi;
+using Remoteit.Models;
 
 namespace Remoteit
 {
@@ -48,6 +49,12 @@ namespace Remoteit
             }
 
             _currentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), HttpApiClient);
+        }
+
+        public Task<List<RemoteitDevice>> GetDevices()
+        {
+            var devices = new List<RemoteitDevice>();
+            return devices;
         }
     }
 }
