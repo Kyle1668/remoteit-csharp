@@ -1,9 +1,12 @@
-﻿using System.Net.Http;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Remoteit.Util;
+﻿using Remoteit.Models;
 using Remoteit.RestApi;
-using Remoteit.Models;
+using Remoteit.Util;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Security.Authentication;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Remoteit
 {
@@ -51,10 +54,39 @@ namespace Remoteit
             _currentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), HttpApiClient);
         }
 
-        public Task<List<RemoteitDevice>> GetDevices()
+        public async Task<List<RemoteitDevice>> GetDevices()
         {
-            var devices = new List<RemoteitDevice>();
-            return devices;
+            if (_currentSession.CurrentSessionData == null || _currentSession.SessionHasExpired())
+            {
+                _currentSession.CurrentSessionData = await _currentSession.GenerateSession(_userName, _userPassword);
+            }
+
+            var httpRequest = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/list/all"))
+            };
+
+            httpRequest.Headers.Add("developerkey", DeveloperKey.ToString());
+            httpRequest.Headers.Add("token", _currentSession.CurrentSessionData.Token);
+
+            try
+            {
+                HttpResponseMessage httpResponse = await HttpApiClient.SendAsync(httpRequest);
+                var rawResponseBody = await httpResponse.Content.ReadAsStringAsync();
+
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    var deserializeResponseBody = JsonSerializer.Deserialize<DevicesListApiResponse>(rawResponseBody);
+                    return deserializeResponseBody.Devices;
+                }
+
+                throw new AuthenticationException(rawResponseBody);
+            }
+            catch (HttpRequestException apiRequestError)
+            {
+                throw new AuthenticationException(apiRequestError.Message);
+            }
         }
     }
 }
