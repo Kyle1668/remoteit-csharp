@@ -24,7 +24,7 @@ namespace Remoteit
         public HttpClient HttpApiClient { get; }
 
         /// <summary>
-        /// Required for authentication.  Your developer key which can be found by logging into remote.it and going to your Account settings page.
+        /// Required for authentication. Your developer key which can be found by logging into remote.it and going to your Account settings page.
         /// </summary>
         public string DeveloperKey { get; }
 
@@ -43,20 +43,16 @@ namespace Remoteit
         {
             _userName = userName;
             _userPassword = password;
+
             DeveloperKey = developerKey;
-
-            if (requestClient == null)
-            {
-                HttpApiClient = new HttpClient() { BaseAddress = new System.Uri("https://api.remot3.it/apv/v27") };
-            }
-            else
-            {
-                HttpApiClient = requestClient;
-            }
-
+            HttpApiClient = requestClient != null ? requestClient : new HttpClient() { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
             CurrentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), HttpApiClient);
         }
 
+        /// <summary>
+        /// Retrieves a list of the user's devices: https://docs.remote.it/api-reference/devices/list
+        /// </summary>
+        /// <returns>A Task object with the list of RemoteitDevices</returns>
         public async Task<List<RemoteitDevice>> GetDevices()
         {
             if (_invalidSession)

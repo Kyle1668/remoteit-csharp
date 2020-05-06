@@ -88,7 +88,7 @@ namespace Remoteit.Test
 
             // Verify that the current session was checked to ensure that a token refresh didn't occur.
             mockSessionManager.Verify(session => session.SessionHasExpired(), Times.Once());
-            mockSessionManager.Verify(session => session.CurrentSessionData, Times.Exactly(2));
+            mockSessionManager.Verify(session => session.CurrentSessionData, Times.Once());
 
             // Ensure that the correct devices are returned
             Assert.True(devices.Count == 5);
