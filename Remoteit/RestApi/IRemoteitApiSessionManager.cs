@@ -16,7 +16,7 @@ namespace Remoteit.RestApi
 
         public RemoteitApiSession CurrentSessionData { get; set; }
 
-        public Task<RemoteitApiSession> GenerateSession(IEnumerable<char> userName, IEnumerable<char> userPassword);
+        public Task<RemoteitApiSession> GenerateSession(string userName, string userPassword);
 
         public bool SessionHasExpired();
     }
