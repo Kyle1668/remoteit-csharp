@@ -10,6 +10,7 @@ using Moq.Protected;
 using Xunit;
 using Remoteit.RestApi;
 using Remoteit.Models;
+using System.Linq;
 
 namespace Remoteit.Test
 {
@@ -85,8 +86,8 @@ namespace Remoteit.Test
                 ItExpr.Is<HttpRequestMessage>(
                     req => req.Method == expectedHttpMethod &&
                            req.RequestUri == expectedApiEndpointUri &&
-                           req.Headers.GetValues("developerkey").ToString() == "X12345" &&
-                           req.Headers.GetValues("token").ToString() == "f5cce83b0a20d66a4c6710a8327e213d"),
+                           req.Headers.GetValues("developerkey").FirstOrDefault() == "X12345" &&
+                           req.Headers.GetValues("token").FirstOrDefault() == "f5cce83b0a20d66a4c6710a8327e213d"),
                 ItExpr.IsAny<CancellationToken>()
             );
 
