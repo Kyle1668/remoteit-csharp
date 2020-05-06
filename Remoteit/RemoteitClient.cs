@@ -59,7 +59,7 @@ namespace Remoteit
 
         public async Task<List<RemoteitDevice>> GetDevices()
         {
-            if (CurrentSession.CurrentSessionData == null || CurrentSession.SessionHasExpired())
+            if (_invalidSession)
             {
                 CurrentSession.CurrentSessionData = await CurrentSession.GenerateSession(_userName, _userPassword);
             }

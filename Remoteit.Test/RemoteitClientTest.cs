@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Moq;
+using Moq.Protected;
+using Remoteit.Models;
+using Remoteit.RestApi;
+using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Moq;
-using Remoteit.Util;
-using Moq.Protected;
 using Xunit;
-using Remoteit.RestApi;
-using Remoteit.Models;
-using System.Linq;
 
 namespace Remoteit.Test
 {
