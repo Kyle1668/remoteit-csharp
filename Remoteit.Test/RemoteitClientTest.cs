@@ -68,10 +68,6 @@ namespace Remoteit.Test
             mockSessionManager.Setup(session => session.SessionHasExpired()).Returns(false).Verifiable();
             mockSessionManager.Setup(session => session.CurrentSessionData).Returns(new RemoteitApiSession() { Token = "f5cce83b0a20d66a4c6710a8327e213d" }).Verifiable();
 
-            // Expected behavior of the HTTP request. Verified at the end of the test.
-            var expectedHttpMethod = HttpMethod.Get;
-            var expectedApiEndpointUri = new Uri("https://api.remot3.it/apv/v27/device/list/all");
-
             // Create a test HttpClient that uses the mocked HttpMessageHandler. Creates instance of SUT.
             var testHttpClient = new HttpClient(mockHttpMessageHandler.Object) { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
             var testRemoteitClient = new RemoteitClient("foo@remote.it", "pass123", "X12345", testHttpClient) { CurrentSession = mockSessionManager.Object };
@@ -84,12 +80,16 @@ namespace Remoteit.Test
                 "SendAsync",
                 Times.Exactly(1),
                 ItExpr.Is<HttpRequestMessage>(
-                    req => req.Method == expectedHttpMethod &&
-                           req.RequestUri == expectedApiEndpointUri &&
+                    req => req.Method == HttpMethod.Get &&
+                           req.RequestUri == new Uri("https://api.remot3.it/apv/v27/device/list/all") &&
                            req.Headers.GetValues("developerkey").FirstOrDefault() == "X12345" &&
                            req.Headers.GetValues("token").FirstOrDefault() == "f5cce83b0a20d66a4c6710a8327e213d"),
                 ItExpr.IsAny<CancellationToken>()
             );
+
+            // Verify that the current session was checked to ensure that a token refresh didn't occur.
+            mockSessionManager.Verify(session => session.SessionHasExpired(), Times.Once());
+            mockSessionManager.Verify(session => session.CurrentSessionData, Times.Exactly(2));
 
             Assert.True(devices.Count == 5);
             Assert.True(devices[0].DeviceAddress == "80:00:01:13:XX:XX:XX:YY");
