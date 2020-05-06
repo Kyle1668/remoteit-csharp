@@ -1,5 +1,5 @@
-﻿using System.Text.Json.Serialization;
-using System.Collections;
+﻿using System.Collections;
+using System.Text.Json.Serialization;
 
 namespace Remoteit.Models
 {

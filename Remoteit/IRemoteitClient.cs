@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 
 namespace Remoteit
 {
@@ -9,6 +6,6 @@ namespace Remoteit
     {
         HttpClient HttpApiClient { get; }
 
-        IEnumerable<char> DeveloperKey { get; }
+        string DeveloperKey { get; }
     }
 }

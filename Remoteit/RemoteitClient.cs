@@ -1,8 +1,15 @@
-﻿using System.Net.Http;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Remoteit.Util;
+﻿using Remoteit.Models;
 using Remoteit.RestApi;
+using Remoteit.Util;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Runtime.CompilerServices;
+using System.Security.Authentication;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+[assembly: InternalsVisibleTo("Remoteit.Test")]
 
 namespace Remoteit
 {
@@ -17,37 +24,68 @@ namespace Remoteit
         public HttpClient HttpApiClient { get; }
 
         /// <summary>
-        /// Required for authentication.  Your developer key which can be found by logging into remote.it and going to your Account settings page.
+        /// Required for authentication. Your developer key which can be found by logging into remote.it and going to your Account settings page.
         /// </summary>
-        public IEnumerable<char> DeveloperKey { get; }
+        public string DeveloperKey { get; }
 
-        private IEnumerable<char> _userName { get; }
+        private string _userName { get; }
 
-        private IEnumerable<char> _userPassword { get; }
+        private string _userPassword { get; }
 
-        private RemoteitApiSessionManager _currentSession;
+        internal IRemoteitApiSessionManager CurrentSession { get; set; }
 
         private bool _invalidSession
         {
-            get { return _currentSession == null || _currentSession.SessionHasExpired(); }
+            get { return CurrentSession == null || CurrentSession.SessionHasExpired(); }
         }
 
-        public RemoteitClient(IEnumerable<char> userName, IEnumerable<char> password, IEnumerable<char> developerKey, HttpClient requestClient = null)
+        public RemoteitClient(string userName, string password, string developerKey, HttpClient requestClient = null)
         {
             _userName = userName;
             _userPassword = password;
+
             DeveloperKey = developerKey;
+            HttpApiClient = requestClient != null ? requestClient : new HttpClient() { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
+            CurrentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), HttpApiClient);
+        }
 
-            if (requestClient == null)
+        /// <summary>
+        /// Retrieves a list of the user's devices: https://docs.remote.it/api-reference/devices/list
+        /// </summary>
+        /// <returns>A Task object with the list of RemoteitDevices</returns>
+        public async Task<List<RemoteitDevice>> GetDevices()
+        {
+            if (_invalidSession)
             {
-                HttpApiClient = new HttpClient() { BaseAddress = new System.Uri("https://api.remot3.it/apv/v27") };
-            }
-            else
-            {
-                HttpApiClient = requestClient;
+                CurrentSession.CurrentSessionData = await CurrentSession.GenerateSession(_userName, _userPassword);
             }
 
-            _currentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), HttpApiClient);
+            var httpRequest = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/list/all"))
+            };
+
+            httpRequest.Headers.Add("developerkey", DeveloperKey.ToString());
+            httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
+
+            try
+            {
+                HttpResponseMessage httpResponse = await HttpApiClient.SendAsync(httpRequest);
+                var rawResponseBody = await httpResponse.Content.ReadAsStringAsync();
+
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    var deserializeResponseBody = JsonSerializer.Deserialize<DevicesListApiResponse>(rawResponseBody);
+                    return deserializeResponseBody.Devices;
+                }
+
+                throw new AuthenticationException(rawResponseBody);
+            }
+            catch (HttpRequestException apiRequestError)
+            {
+                throw new AuthenticationException(apiRequestError.Message);
+            }
         }
     }
 }

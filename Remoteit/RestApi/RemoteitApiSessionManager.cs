@@ -13,21 +13,21 @@ using System.Threading.Tasks;
 
 namespace Remoteit.RestApi
 {
-    internal class RemoteitApiSessionManager
+    internal class RemoteitApiSessionManager : IRemoteitApiSessionManager
     {
         private IUnixTimeStampCalculator _timeCalculator;
 
-        private HttpClient _httpApiClient { get; }
+        public HttpClient HttpApiClient { get; set; }
 
         /// <summary>
         /// The data for the current API session. Includes the access token used for request authentication.
         /// </summary>
         public RemoteitApiSession CurrentSessionData { get; set; }
 
-        public RemoteitApiSessionManager(IUnixTimeStampCalculator timeCalculator, HttpClient httpClient)
+        public RemoteitApiSessionManager(IUnixTimeStampCalculator timeCalculator = null, HttpClient httpClient = null)
         {
-            _timeCalculator = timeCalculator;
-            _httpApiClient = httpClient;
+            _timeCalculator = timeCalculator ?? new UnixTimeStampCalculator();
+            HttpApiClient = httpClient ?? new HttpClient() { BaseAddress = new System.Uri("https://api.remot3.it/apv/v27") };
         }
 
         /// <summary>
@@ -39,9 +39,9 @@ namespace Remoteit.RestApi
         /// <returns>A new RemoteitApiSession instance</returns>
         public async Task<RemoteitApiSession> GenerateSession(string userName, string userPassword)
         {
-            var apiEndpoint = new Uri(string.Concat(_httpApiClient.BaseAddress, "/device/connect"));
+            var apiEndpoint = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/connect"));
 
-            var requestBody = new Dictionary<string, IEnumerable<char>>()
+            var requestBody = new Dictionary<string, string>()
             {
                 { "username", userName },
                 { "password", userPassword }
@@ -51,7 +51,7 @@ namespace Remoteit.RestApi
 
             try
             {
-                HttpResponseMessage response = await _httpApiClient.PostAsync(apiEndpoint, rawJsonRequestBody);
+                HttpResponseMessage response = await HttpApiClient.PostAsync(apiEndpoint, rawJsonRequestBody);
 
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
