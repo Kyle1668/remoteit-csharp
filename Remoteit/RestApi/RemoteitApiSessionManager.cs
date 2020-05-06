@@ -37,11 +37,11 @@ namespace Remoteit.RestApi
         /// <param name="userName">E-mail for remote.it(or for legacy users, your username)</param>
         /// <param name="userPassword">Password for remote.it</param>
         /// <returns>A new RemoteitApiSession instance</returns>
-        public async Task<RemoteitApiSession> GenerateSession(IEnumerable<char> userName, IEnumerable<char> userPassword)
+        public async Task<RemoteitApiSession> GenerateSession(string userName, string userPassword)
         {
             var apiEndpoint = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/connect"));
 
-            var requestBody = new Dictionary<string, IEnumerable<char>>()
+            var requestBody = new Dictionary<string, string>()
             {
                 { "username", userName },
                 { "password", userPassword }

@@ -9,6 +9,6 @@ namespace Remoteit
     {
         HttpClient HttpApiClient { get; }
 
-        IEnumerable<char> DeveloperKey { get; }
+        string DeveloperKey { get; }
     }
 }

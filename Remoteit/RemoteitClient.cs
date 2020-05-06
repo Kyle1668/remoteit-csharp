@@ -26,11 +26,11 @@ namespace Remoteit
         /// <summary>
         /// Required for authentication.  Your developer key which can be found by logging into remote.it and going to your Account settings page.
         /// </summary>
-        public IEnumerable<char> DeveloperKey { get; }
+        public string DeveloperKey { get; }
 
-        private IEnumerable<char> _userName { get; }
+        private string _userName { get; }
 
-        private IEnumerable<char> _userPassword { get; }
+        private string _userPassword { get; }
 
         internal IRemoteitApiSessionManager CurrentSession { get; set; }
 
@@ -39,7 +39,7 @@ namespace Remoteit
             get { return CurrentSession == null || CurrentSession.SessionHasExpired(); }
         }
 
-        public RemoteitClient(IEnumerable<char> userName, IEnumerable<char> password, IEnumerable<char> developerKey, HttpClient requestClient = null)
+        public RemoteitClient(string userName, string password, string developerKey, HttpClient requestClient = null)
         {
             _userName = userName;
             _userPassword = password;
