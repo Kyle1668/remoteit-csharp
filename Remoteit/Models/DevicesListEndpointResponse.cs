@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Remoteit.Models
 {
-    internal class DevicesListApiResponse
+    internal class DevicesListEndpointResponse
     {
         [JsonPropertyName("status")]
         public string Status { get; set; }

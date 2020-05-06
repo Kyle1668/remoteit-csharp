@@ -76,7 +76,7 @@ namespace Remoteit
 
                 if (httpResponse.IsSuccessStatusCode)
                 {
-                    var deserializeResponseBody = JsonSerializer.Deserialize<DevicesListApiResponse>(rawResponseBody);
+                    var deserializeResponseBody = JsonSerializer.Deserialize<DevicesListEndpointResponse>(rawResponseBody);
                     return deserializeResponseBody.Devices;
                 }
 
@@ -86,6 +86,11 @@ namespace Remoteit
             {
                 throw new AuthenticationException(apiRequestError.Message);
             }
+        }
+
+        public async Task<ServiceConnection> ConnectToService(string fakeDeviceAddress)
+        {
+            throw new NotImplementedException();
         }
     }
 }
