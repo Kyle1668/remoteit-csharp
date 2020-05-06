@@ -4,9 +4,12 @@ using Remoteit.Util;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Security.Authentication;
 using System.Text.Json;
 using System.Threading.Tasks;
+
+[assembly: InternalsVisibleTo("Remoteit.Test")]
 
 namespace Remoteit
 {
@@ -29,11 +32,11 @@ namespace Remoteit
 
         private IEnumerable<char> _userPassword { get; }
 
-        private RemoteitApiSessionManager _currentSession;
+        internal IRemoteitApiSessionManager CurrentSession { get; set; }
 
         private bool _invalidSession
         {
-            get { return _currentSession == null || _currentSession.SessionHasExpired(); }
+            get { return CurrentSession == null || CurrentSession.SessionHasExpired(); }
         }
 
         public RemoteitClient(IEnumerable<char> userName, IEnumerable<char> password, IEnumerable<char> developerKey, HttpClient requestClient = null)
@@ -51,14 +54,14 @@ namespace Remoteit
                 HttpApiClient = requestClient;
             }
 
-            _currentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), HttpApiClient);
+            CurrentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), HttpApiClient);
         }
 
         public async Task<List<RemoteitDevice>> GetDevices()
         {
-            if (_currentSession.CurrentSessionData == null || _currentSession.SessionHasExpired())
+            if (CurrentSession.CurrentSessionData == null || CurrentSession.SessionHasExpired())
             {
-                _currentSession.CurrentSessionData = await _currentSession.GenerateSession(_userName, _userPassword);
+                CurrentSession.CurrentSessionData = await CurrentSession.GenerateSession(_userName, _userPassword);
             }
 
             var httpRequest = new HttpRequestMessage()
@@ -68,7 +71,7 @@ namespace Remoteit
             };
 
             httpRequest.Headers.Add("developerkey", DeveloperKey.ToString());
-            httpRequest.Headers.Add("token", _currentSession.CurrentSessionData.Token);
+            httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
 
             try
             {

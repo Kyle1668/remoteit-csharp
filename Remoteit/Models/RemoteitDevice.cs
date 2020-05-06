@@ -56,10 +56,12 @@ namespace Remoteit.Models
         public string ServiceTitle { get; set; }
 
         [JsonPropertyName("webenabled")]
-        public int WebEnabled { get; set; }
+        public string WebEnabled { get; set; }
 
+        /*
         [JsonPropertyName("weburi")]
-        public List<string> WebUri { get; set; }
+        public string WebUri { get; set; }
+        */
 
         [JsonPropertyName("localurl")]
         public string LocalUrl { get; set; }
