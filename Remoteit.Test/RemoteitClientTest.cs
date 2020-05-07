@@ -103,7 +103,7 @@ namespace Remoteit.Test
         public async Task TestConnectToService()
         {
             // Set up Mock of HttpMessageHandler. This allows us to mock the response to the HTTP request.
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
             mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>
             (
                 "SendAsync",
