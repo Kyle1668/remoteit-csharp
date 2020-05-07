@@ -76,8 +76,50 @@ namespace Remoteit
 
                 if (httpResponse.IsSuccessStatusCode)
                 {
-                    var deserializeResponseBody = JsonSerializer.Deserialize<DevicesListApiResponse>(rawResponseBody);
+                    var deserializeResponseBody = JsonSerializer.Deserialize<DevicesListEndpointResponse>(rawResponseBody);
                     return deserializeResponseBody.Devices;
+                }
+
+                throw new AuthenticationException(rawResponseBody);
+            }
+            catch (HttpRequestException apiRequestError)
+            {
+                throw new AuthenticationException(apiRequestError.Message);
+            }
+        }
+
+        public async Task<ServiceConnection> ConnectToService(string deviceAddress)
+        {
+            if (_invalidSession)
+            {
+                CurrentSession.CurrentSessionData = await CurrentSession.GenerateSession(_userName, _userPassword);
+            }
+
+            var requestBodyAttributed = new Dictionary<string, dynamic>()
+            {
+                {"deviceaddress",  deviceAddress},
+                {"wait", true }
+            };
+
+            var httpRequest = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/connect")),
+                Content = new StringContent(JsonSerializer.Serialize(requestBodyAttributed))
+            };
+
+            httpRequest.Headers.Add("developerkey", DeveloperKey.ToString());
+            httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
+
+            try
+            {
+                HttpResponseMessage httpResponse = await HttpApiClient.SendAsync(httpRequest);
+                var rawResponseBody = await httpResponse.Content.ReadAsStringAsync();
+
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    var deserializeResponseBody = JsonSerializer.Deserialize<ServiceConnectionEndpointResponse>(rawResponseBody);
+                    return deserializeResponseBody.Connection;
                 }
 
                 throw new AuthenticationException(rawResponseBody);

@@ -98,5 +98,54 @@ namespace Remoteit.Test
             Assert.True(devices[3].DeviceAddress == "80:00:01:13:AA:XX:XX:XX");
             Assert.True(devices[4].DeviceAddress == "80:00:00:00:ZZ:ZZ:ZZ:ZZ");
         }
+
+        [Fact]
+        public async Task TestConnectToService()
+        {
+            // Set up Mock of HttpMessageHandler. This allows us to mock the response to the HTTP request.
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>
+            (
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Post && req.RequestUri == new Uri("https://api.remot3.it/apv/v27/device/connect")),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            .ReturnsAsync(new HttpResponseMessage()
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent("{ \"status\": \"true\", \"connection\": { \"connectionid\": \"972ac13a-7169-476b-8fd4-5cd9cdd9924a\", \"connectionOverridden\": \"true\", \"deviceaddress\": \"80:00:00:00:01:XX:YY:ZZ\", \"expirationsec\": \"28796\", \"imageintervalms\": \"1000\", \"previousConnection\": \"http:\\/\\/proxy17.rt3.io:32192\", \"proxy\": \"http:\\/\\/proxy2.remot3.it:37993\", \"proxyport\": \"37993\", \"proxyserver\": \"proxy2.remot3.it\", \"requested\": \"5\\/6\\/2020T8:59 PM\", \"status\": \"http:\\/\\/proxy2.remot3.it:37993\", \"streamscheme\": [ null ], \"streamuri\": [ null ], \"url\": [ null ], \"requestedAt\": \"2020-05-07T00:59:00+00:00\" }, \"wait\": true, \"connectionid\": \"972ac13a-7169-476b-8fd4-5cd9cdd9924a\" }")
+            })
+            .Verifiable();
+
+            // Set up mock of the session data. This will prevent autorefreshing the sesison token which is outside the scope of this test.
+            var mockSessionManager = new Mock<IRemoteitApiSessionManager>();
+            mockSessionManager.Setup(session => session.SessionHasExpired()).Returns(false).Verifiable();
+            mockSessionManager.Setup(session => session.CurrentSessionData).Returns(new RemoteitApiSession() { Token = "f5cce83b0a20d66a4c6710a8327e213d" }).Verifiable();
+
+            // Create a test HttpClient that uses the mocked HttpMessageHandler. Creates instance of SUT.
+            var testHttpClient = new HttpClient(mockHttpMessageHandler.Object) { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
+            var testRemoteitClient = new RemoteitClient("foo@remote.it", "pass123", "X12345", testHttpClient) { CurrentSession = mockSessionManager.Object };
+
+            // Execute the SUT: Attempt to get devices
+            var fakeDeviceAddress = "80:00:00:00:01:XX:YY:ZZ";
+            var testConnectionData = await testRemoteitClient.ConnectToService(fakeDeviceAddress);
+
+            // Verify that the request made to the remote.it API was only made once and with the correct HTTP method and headers.
+            mockHttpMessageHandler.Protected().Verify(
+                "SendAsync",
+                Times.Exactly(1),
+                ItExpr.Is<HttpRequestMessage>(
+                    req => req.Method == HttpMethod.Post &&
+                           req.RequestUri == new Uri("https://api.remot3.it/apv/v27/device/connect") &&
+                           req.Headers.GetValues("developerkey").FirstOrDefault() == "X12345" &&
+                           req.Headers.GetValues("token").FirstOrDefault() == "f5cce83b0a20d66a4c6710a8327e213d"),
+                ItExpr.IsAny<CancellationToken>()
+            );
+
+            Assert.True(testConnectionData.ProxyPort == "37993");
+            Assert.True(testConnectionData.ProxyServer == "proxy2.remot3.it");
+            Assert.True(testConnectionData.DeviceAddress == fakeDeviceAddress);
+            Assert.True(testConnectionData.ConnectionId == "972ac13a-7169-476b-8fd4-5cd9cdd9924a");
+        }
     }
 }
