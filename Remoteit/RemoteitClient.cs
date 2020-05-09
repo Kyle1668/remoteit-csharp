@@ -34,7 +34,7 @@ namespace Remoteit
 
         internal IRemoteitApiSessionManager CurrentSession { get; set; }
 
-        private bool _invalidSession
+        private bool _isInvalidSession
         {
             get { return CurrentSession == null || CurrentSession.SessionHasExpired(); }
         }
@@ -49,15 +49,11 @@ namespace Remoteit
             CurrentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), HttpApiClient);
         }
 
-        /// <summary>
-        /// Retrieves a list of the user's devices: https://docs.remote.it/api-reference/devices/list
-        /// </summary>
-        /// <returns>A Task object with the list of RemoteitDevices</returns>
         public async Task<List<RemoteitDevice>> GetDevices()
         {
-            if (_invalidSession)
+            if (_isInvalidSession)
             {
-                CurrentSession.CurrentSessionData = await CurrentSession.GenerateSession(_userName, _userPassword);
+                CurrentSession.CurrentSessionData = await CurrentSession.GenerateSession(_userName, _userPassword, DeveloperKey);
             }
 
             var httpRequest = new HttpRequestMessage()
@@ -65,37 +61,22 @@ namespace Remoteit
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/list/all"))
             };
-
             httpRequest.Headers.Add("developerkey", DeveloperKey.ToString());
             httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
 
-            try
-            {
-                HttpResponseMessage httpResponse = await HttpApiClient.SendAsync(httpRequest);
-                var rawResponseBody = await httpResponse.Content.ReadAsStringAsync();
-
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    var deserializeResponseBody = JsonSerializer.Deserialize<DevicesListEndpointResponse>(rawResponseBody);
-                    return deserializeResponseBody.Devices;
-                }
-
-                throw new AuthenticationException(rawResponseBody);
-            }
-            catch (HttpRequestException apiRequestError)
-            {
-                throw new AuthenticationException(apiRequestError.Message);
-            }
+            var apiRequestSender = new RemoteitApiRequest<DevicesListEndpointResponse>();
+            DevicesListEndpointResponse results = await apiRequestSender.SendAsync(HttpApiClient, httpRequest);
+            return results.Devices;
         }
 
         public async Task<ServiceConnection> ConnectToService(string deviceAddress)
         {
-            if (_invalidSession)
+            if (_isInvalidSession)
             {
-                CurrentSession.CurrentSessionData = await CurrentSession.GenerateSession(_userName, _userPassword);
+                CurrentSession.CurrentSessionData = await CurrentSession.GenerateSession(_userName, _userPassword, DeveloperKey);
             }
 
-            var requestBodyAttributed = new Dictionary<string, dynamic>()
+            var requestBodyAttributes = new Dictionary<string, dynamic>()
             {
                 {"deviceaddress",  deviceAddress},
                 {"wait", true }
@@ -105,29 +86,14 @@ namespace Remoteit
             {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/connect")),
-                Content = new StringContent(JsonSerializer.Serialize(requestBodyAttributed))
+                Content = new StringContent(JsonSerializer.Serialize(requestBodyAttributes))
             };
-
-            httpRequest.Headers.Add("developerkey", DeveloperKey.ToString());
+            httpRequest.Headers.Add("developerkey", DeveloperKey);
             httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
 
-            try
-            {
-                HttpResponseMessage httpResponse = await HttpApiClient.SendAsync(httpRequest);
-                var rawResponseBody = await httpResponse.Content.ReadAsStringAsync();
-
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    var deserializeResponseBody = JsonSerializer.Deserialize<ServiceConnectionEndpointResponse>(rawResponseBody);
-                    return deserializeResponseBody.Connection;
-                }
-
-                throw new AuthenticationException(rawResponseBody);
-            }
-            catch (HttpRequestException apiRequestError)
-            {
-                throw new AuthenticationException(apiRequestError.Message);
-            }
+            var apiRequestSender = new RemoteitApiRequest<ServiceConnectionEndpointResponse>();
+            ServiceConnectionEndpointResponse results = await apiRequestSender.SendAsync(HttpApiClient, httpRequest);
+            return results.Connection;
         }
     }
 }

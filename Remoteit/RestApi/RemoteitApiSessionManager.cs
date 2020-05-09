@@ -2,10 +2,8 @@
 using Remoteit.Util;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Security.Authentication;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -19,53 +17,33 @@ namespace Remoteit.RestApi
 
         public HttpClient HttpApiClient { get; set; }
 
-        /// <summary>
-        /// The data for the current API session. Includes the access token used for request authentication.
-        /// </summary>
         public RemoteitApiSession CurrentSessionData { get; set; }
 
         public RemoteitApiSessionManager(IUnixTimeStampCalculator timeCalculator = null, HttpClient httpClient = null)
         {
             _timeCalculator = timeCalculator ?? new UnixTimeStampCalculator();
-            HttpApiClient = httpClient ?? new HttpClient() { BaseAddress = new System.Uri("https://api.remot3.it/apv/v27") };
+            HttpApiClient = httpClient ?? new HttpClient() { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
         }
 
-        /// <summary>
-        /// Creates a API session by retreiving a new access token from the "/device/connect" API endpoint.
-        /// https://docs.remote.it/api-reference/authentication
-        /// </summary>
-        /// <param name="userName">E-mail for remote.it(or for legacy users, your username)</param>
-        /// <param name="userPassword">Password for remote.it</param>
-        /// <returns>A new RemoteitApiSession instance</returns>
-        public async Task<RemoteitApiSession> GenerateSession(string userName, string userPassword)
+        public async Task<RemoteitApiSession> GenerateSession(string userName, string userPassword, string developerKey)
         {
-            var apiEndpoint = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/connect"));
-
-            var requestBody = new Dictionary<string, string>()
+            var requestBodyAttributes = new Dictionary<string, string>()
             {
                 { "username", userName },
                 { "password", userPassword }
             };
 
-            var rawJsonRequestBody = new StringContent(JsonSerializer.Serialize(requestBody));
-
-            try
+            var httpRequest = new HttpRequestMessage()
             {
-                HttpResponseMessage response = await HttpApiClient.PostAsync(apiEndpoint, rawJsonRequestBody);
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/connect")),
+                Content = new StringContent(JsonSerializer.Serialize(requestBodyAttributes))
+            };
+            httpRequest.Headers.Add("developerkey", developerKey);
 
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    throw new AuthenticationException();
-                }
-
-                var responseBody = await response.Content.ReadAsStringAsync();
-                CurrentSessionData = JsonSerializer.Deserialize<RemoteitApiSession>(responseBody);
-                return CurrentSessionData;
-            }
-            catch (HttpRequestException apiRequestError)
-            {
-                throw new AuthenticationException(apiRequestError.Message);
-            }
+            var apiRequestSender = new RemoteitApiRequest<RemoteitApiSession>();
+            RemoteitApiSession results = await apiRequestSender.SendAsync(HttpApiClient, httpRequest);
+            return results;
         }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace Remoteit.RestApi
         public RemoteitApiSession CurrentSessionData { get; set; }
         public HttpClient HttpApiClient { get; set; }
 
-        public Task<RemoteitApiSession> GenerateSession(string userName, string userPassword);
+        public Task<RemoteitApiSession> GenerateSession(string userName, string userPassword, string developerKey);
 
         public bool SessionHasExpired();
     }

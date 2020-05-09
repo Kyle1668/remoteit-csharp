@@ -48,7 +48,7 @@ namespace Remoteit.Test.RestApi
             var testSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), testHttpClient);
 
             // Execute the SUT: Attempt to create a new session.
-            await testSession.GenerateSession("kyle", "some_developer_key");
+            testSession.CurrentSessionData = await testSession.GenerateSession("kyle", "some_developer_key", "some_dev_key");
 
             // Verify that the request made to the remote.it API was only made once and was the correct method.
             mockHttpMessageHandler.Protected().Verify(
@@ -96,7 +96,7 @@ namespace Remoteit.Test.RestApi
             var expectedApiEndpointUri = new Uri("https://api.remot3.it/apv/v27/device/connect");
 
             // Execute the SUT: The 401 status code in the API response should trigger an AuthenticationException.
-            await Assert.ThrowsAsync<AuthenticationException>(() => testSession.GenerateSession("kyle", "incorrect_developer_key"));
+            await Assert.ThrowsAsync<AuthenticationException>(() => testSession.GenerateSession("kyle", "incorrect_password", "some_dev_key"));
 
             // Verify that the request made to the remote.it API was only made once and was the correct method.
             mockHttpMessageHandler.Protected().Verify(
