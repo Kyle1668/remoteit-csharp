@@ -36,7 +36,7 @@ namespace Remoteit.RestApi
             var httpRequest = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/connect")),
+                RequestUri = new Uri(string.Concat(HttpApiClient.BaseAddress, "/user/login")),
                 Content = new StringContent(JsonSerializer.Serialize(requestBodyAttributes))
             };
             httpRequest.Headers.Add("developerkey", developerKey);

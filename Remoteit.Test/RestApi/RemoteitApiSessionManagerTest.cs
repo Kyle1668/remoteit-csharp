@@ -41,7 +41,7 @@ namespace Remoteit.Test.RestApi
 
             // Expected behavior of the HTTP request. Verified at the end of the test.
             var expectedHttpMethod = HttpMethod.Post;
-            var expectedApiEndpointUri = new Uri("https://api.remot3.it/apv/v27/device/connect");
+            var expectedApiEndpointUri = new Uri("https://api.remot3.it/apv/v27/user/login");
 
             // Create a test HttpClient that uses the mocked HttpMessageHandler. Creates instance of SUT.
             var testHttpClient = new HttpClient(mockHttpMessageHandler.Object) { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
@@ -93,7 +93,7 @@ namespace Remoteit.Test.RestApi
 
             // Expected behavior of the HTTP request. Verified at the end of the test.
             var expectedHttpMethod = HttpMethod.Post;
-            var expectedApiEndpointUri = new Uri("https://api.remot3.it/apv/v27/device/connect");
+            var expectedApiEndpointUri = new Uri("https://api.remot3.it/apv/v27/user/login");
 
             // Execute the SUT: The 401 status code in the API response should trigger an AuthenticationException.
             await Assert.ThrowsAsync<AuthenticationException>(() => testSession.GenerateSession("kyle", "incorrect_password", "some_dev_key"));
