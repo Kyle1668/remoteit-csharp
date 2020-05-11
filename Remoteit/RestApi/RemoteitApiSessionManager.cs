@@ -41,15 +41,10 @@ namespace Remoteit.RestApi
             };
             httpRequest.Headers.Add("developerkey", developerKey);
 
-            var apiRequestSender = new RemoteitApiRequest<RemoteitApiSession>();
-            RemoteitApiSession results = await apiRequestSender.SendAsync(HttpApiClient, httpRequest);
-            return results;
+            var sessionData = await new RemoteitApiRequest<RemoteitApiSession>().SendAsync(HttpApiClient, httpRequest);
+            return sessionData;
         }
 
-        /// <summary>
-        /// Compares the current Unix time and the session expiration date to determine wether the current token/session has expired.
-        /// </summary>
-        /// <returns>Wether the session has expires or not.</returns>
         public bool SessionHasExpired()
         {
             if (CurrentSessionData == null)
