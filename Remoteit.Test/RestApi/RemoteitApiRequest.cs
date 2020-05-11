@@ -14,10 +14,6 @@ namespace Remoteit.Test.RestApi
 {
     public class RemoteitApiRequest
     {
-        // Test Cases
-        // 1. When IsSuccessStatusCode is false, the correct AuthenticationException is thrown.
-        // 2. When an HttpRequestException us thrown, the correct AuthenticationException is thrown.
-
         [Fact]
         public async Task TestHandlingIncorrectStatusCode()
         {
@@ -52,11 +48,10 @@ namespace Remoteit.Test.RestApi
 
             await Assert.ThrowsAsync<AuthenticationException>(async () =>
              {
-                 var testRequest = new RemoteitApiRequest<DevicesListEndpointResponse>();
-                 await testRequest.SendAsync(testHttpClient, httpRequest);
+                 var testRequest = new RemoteitApiRequest<DevicesListEndpointResponse>(testHttpClient);
+                 await testRequest.SendAsync(httpRequest);
              });
 
-            // Verify that the request made to the remote.it API was only made once and was the correct method.
             mockHttpMessageHandler.Protected().Verify(
                 "SendAsync",
                 Times.Exactly(1),
@@ -88,7 +83,7 @@ namespace Remoteit.Test.RestApi
             await Assert.ThrowsAsync<AuthenticationException>(async () =>
             {
                 var testRequest = new RemoteitApiRequest<DevicesListEndpointResponse>();
-                await testRequest.SendAsync(testHttpClient, httpRequest);
+                await testRequest.SendAsync(httpRequest);
             });
         }
     }

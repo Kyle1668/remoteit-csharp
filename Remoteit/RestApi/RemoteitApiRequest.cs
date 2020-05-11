@@ -7,11 +7,18 @@ namespace Remoteit.RestApi
 {
     internal class RemoteitApiRequest<T> : IRemoteitApiRequest<T>
     {
-        public async Task<T> SendAsync(HttpClient httpApiClient, HttpRequestMessage httpRequest)
+        private HttpClient _httpApiClient;
+
+        public RemoteitApiRequest(HttpClient httpApiClient = null)
+        {
+            _httpApiClient = httpApiClient ?? new HttpClient();
+        }
+
+        public async Task<T> SendAsync(HttpRequestMessage httpRequest)
         {
             try
             {
-                HttpResponseMessage httpResponse = await httpApiClient.SendAsync(httpRequest);
+                HttpResponseMessage httpResponse = await _httpApiClient.SendAsync(httpRequest);
                 var rawResponseBody = await httpResponse.Content.ReadAsStringAsync();
 
                 if (httpResponse.IsSuccessStatusCode)
