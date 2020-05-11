@@ -15,15 +15,15 @@ namespace Remoteit.RestApi
     {
         private IUnixTimeStampCalculator _timeCalculator;
 
-        public HttpClient HttpApiClient { get; set; }
-
-        public RemoteitApiSession CurrentSessionData { get; set; }
-
         public RemoteitApiSessionManager(IUnixTimeStampCalculator timeCalculator = null, HttpClient httpClient = null)
         {
             _timeCalculator = timeCalculator ?? new UnixTimeStampCalculator();
-            HttpApiClient = httpClient ?? new HttpClient() { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
+            _httpApiClient = httpClient ?? new HttpClient() { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
         }
+
+        public RemoteitApiSession CurrentSessionData { get; set; }
+
+        private HttpClient _httpApiClient { get; set; }
 
         public async Task<RemoteitApiSession> GenerateSession(string userName, string userPassword, string developerKey)
         {
@@ -36,12 +36,12 @@ namespace Remoteit.RestApi
             var httpRequest = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(string.Concat(HttpApiClient.BaseAddress, "/user/login")),
+                RequestUri = new Uri(string.Concat(_httpApiClient.BaseAddress, "/user/login")),
                 Content = new StringContent(JsonSerializer.Serialize(requestBodyAttributes))
             };
             httpRequest.Headers.Add("developerkey", developerKey);
 
-            var sessionData = await new RemoteitApiRequest<RemoteitApiSession>().SendAsync(HttpApiClient, httpRequest);
+            var sessionData = await new RemoteitApiRequest<RemoteitApiSession>().SendAsync(_httpApiClient, httpRequest);
             return sessionData;
         }
 

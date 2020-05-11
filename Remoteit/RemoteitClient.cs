@@ -52,17 +52,17 @@ namespace Remoteit
                 CurrentSession.CurrentSessionData = await CurrentSession.GenerateSession(_userName, _userPassword, DeveloperKey);
             }
 
-            var requestBodyAttributes = new Dictionary<string, dynamic>()
+            string requestBodyJsonData = JsonSerializer.Serialize(new Dictionary<string, dynamic>()
             {
                 {"deviceaddress",  deviceAddress},
                 {"wait", true }
-            };
+            });
 
             var httpRequest = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(string.Concat(_httpApiClient.BaseAddress, "/device/connect")),
-                Content = new StringContent(JsonSerializer.Serialize(requestBodyAttributes))
+                Content = new StringContent(requestBodyJsonData)
             };
             httpRequest.Headers.Add("developerkey", DeveloperKey);
             httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
@@ -84,7 +84,7 @@ namespace Remoteit
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(string.Concat(_httpApiClient.BaseAddress, "/device/list/all"))
             };
-            httpRequest.Headers.Add("developerkey", DeveloperKey.ToString());
+            httpRequest.Headers.Add("developerkey", DeveloperKey);
             httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
 
             var apiRequestSender = new RemoteitApiRequest<DevicesListEndpointResponse>();
