@@ -1,15 +1,14 @@
 ﻿using Moq;
 using Moq.Protected;
+using Remoteit.Models;
 using Remoteit.RestApi;
-using Remoteit.Util;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using Remoteit.Models;
-using System.Security.Authentication;
 
 namespace Remoteit.Test.RestApi
 {
@@ -51,7 +50,6 @@ namespace Remoteit.Test.RestApi
                 RequestUri = expectedApiEndpointUri
             };
 
-            // Execute the SUT: Attempt to create a new session.
             await Assert.ThrowsAsync<AuthenticationException>(async () =>
              {
                  var testRequest = new RemoteitApiRequest<DevicesListEndpointResponse>();
@@ -70,7 +68,28 @@ namespace Remoteit.Test.RestApi
         [Fact]
         public async Task TestHandlingHttpRequestException()
         {
-            throw new NotImplementedException();
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>
+            (
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            .ThrowsAsync(new HttpRequestException())
+            .Verifiable();
+
+            var testHttpClient = new HttpClient(mockHttpMessageHandler.Object) { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
+            var httpRequest = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri("https://api.remot3.it/apv/v27/device/list/all")
+            };
+
+            await Assert.ThrowsAsync<AuthenticationException>(async () =>
+            {
+                var testRequest = new RemoteitApiRequest<DevicesListEndpointResponse>();
+                await testRequest.SendAsync(testHttpClient, httpRequest);
+            });
         }
     }
 }
