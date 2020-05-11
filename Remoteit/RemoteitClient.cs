@@ -21,7 +21,7 @@ namespace Remoteit
         /// <summary>
         /// The Http client used to facilitate requests to the remote.it REST API.
         /// </summary>
-        public HttpClient HttpApiClient { get; }
+        private HttpClient _httpApiClient { get; }
 
         /// <summary>
         /// Required for authentication. Your developer key which can be found by logging into remote.it and going to your Account settings page.
@@ -45,8 +45,8 @@ namespace Remoteit
             _userPassword = password;
 
             DeveloperKey = developerKey;
-            HttpApiClient = requestClient != null ? requestClient : new HttpClient() { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
-            CurrentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), HttpApiClient);
+            _httpApiClient = requestClient != null ? requestClient : new HttpClient() { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
+            CurrentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), _httpApiClient);
         }
 
         public async Task<List<RemoteitDevice>> GetDevices()
@@ -59,13 +59,13 @@ namespace Remoteit
             var httpRequest = new HttpRequestMessage()
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/list/all"))
+                RequestUri = new Uri(string.Concat(_httpApiClient.BaseAddress, "/device/list/all"))
             };
             httpRequest.Headers.Add("developerkey", DeveloperKey.ToString());
             httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
 
             var apiRequestSender = new RemoteitApiRequest<DevicesListEndpointResponse>();
-            DevicesListEndpointResponse results = await apiRequestSender.SendAsync(HttpApiClient, httpRequest);
+            DevicesListEndpointResponse results = await apiRequestSender.SendAsync(_httpApiClient, httpRequest);
             return results.Devices;
         }
 
@@ -85,14 +85,14 @@ namespace Remoteit
             var httpRequest = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/connect")),
+                RequestUri = new Uri(string.Concat(_httpApiClient.BaseAddress, "/device/connect")),
                 Content = new StringContent(JsonSerializer.Serialize(requestBodyAttributes))
             };
             httpRequest.Headers.Add("developerkey", DeveloperKey);
             httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
 
             var apiRequestSender = new RemoteitApiRequest<ServiceConnectionEndpointResponse>();
-            ServiceConnectionEndpointResponse results = await apiRequestSender.SendAsync(HttpApiClient, httpRequest);
+            ServiceConnectionEndpointResponse results = await apiRequestSender.SendAsync(_httpApiClient, httpRequest);
             return results.Connection;
         }
     }
