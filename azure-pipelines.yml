@@ -22,8 +22,13 @@ jobs:
         command: 'test'
 
 - job: Publish_Package
+  dependsOn: Build_and_Test
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   steps:
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'build'
+      projects: './Remoteit/Remoteit.csproj'
   - task: NuGetCommand@2
     inputs:
       command: 'pack'
