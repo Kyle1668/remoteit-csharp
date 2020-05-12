@@ -32,11 +32,8 @@ jobs:
   - task: NuGetCommand@2
     inputs:
       command: 'pack'
-      packagesToPack: './Remoteit/Remoteit.csproj'
-      versioningScheme: 'byPrereleaseNumber'
-      majorVersion: '1'
-      minorVersion: '0'
-      patchVersion: '0'
+      packagesToPack: '**/*.csproj'
+      versioningScheme: 'byBuildNumber'
   - task: NuGetCommand@2
     inputs:
       command: 'push'
