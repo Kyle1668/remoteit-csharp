@@ -17,6 +17,13 @@ namespace Remoteit
     /// </summary>
     public class RemoteitClient : IRemoteitClient
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <param name="developerKey">Your developer key which can be found by logging into remote.it and going to your "Account" settings page.</param>
+        /// <param name="requestClient"></param>
         public RemoteitClient(string userName, string password, string developerKey, HttpClient requestClient = null)
         {
             _userName = userName;
@@ -27,9 +34,6 @@ namespace Remoteit
             CurrentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), _httpApiClient);
         }
 
-        /// <summary>
-        /// Required for authentication. Your developer key which can be found by logging into remote.it and going to your Account settings page.
-        /// </summary>
         public string DeveloperKey { get; }
 
         internal IRemoteitApiSessionManager CurrentSession { get; set; }
@@ -45,6 +49,10 @@ namespace Remoteit
 
         private string _userPassword { get; }
 
+        /// <summary>
+        /// Generate a connection to a remote.it device/service. API Documentation: https://docs.remote.it/api-reference/devices/connect
+        /// </summary>
+        /// <param name="deviceAddress">The service address (e.g. service ID) for the device you'd like to connect to.</param>
         public async Task<ServiceConnection> ConnectToService(string deviceAddress)
         {
             if (_isInvalidSession)
@@ -72,6 +80,9 @@ namespace Remoteit
             return results.Connection;
         }
 
+        /// <summary>
+        /// Get a  list of your remote.it devices and data. API Documentation: https://docs.remote.it/api-reference/devices/list
+        /// </summary>
         public async Task<List<RemoteitDevice>> GetDevices()
         {
             if (_isInvalidSession)
