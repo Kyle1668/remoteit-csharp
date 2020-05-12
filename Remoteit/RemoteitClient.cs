@@ -17,6 +17,13 @@ namespace Remoteit
     /// </summary>
     public class RemoteitClient : IRemoteitClient
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <param name="developerKey">Your developer key which can be found by logging into remote.it and going to your "Account" settings page.</param>
+        /// <param name="requestClient"></param>
         public RemoteitClient(string userName, string password, string developerKey, HttpClient requestClient = null)
         {
             _userName = userName;
@@ -27,9 +34,6 @@ namespace Remoteit
             CurrentSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), _httpApiClient);
         }
 
-        /// <summary>
-        /// Required for authentication. Your developer key which can be found by logging into remote.it and going to your Account settings page.
-        /// </summary>
         public string DeveloperKey { get; }
 
         internal IRemoteitApiSessionManager CurrentSession { get; set; }
