@@ -1,11 +1,7 @@
-﻿using System.Net.Http;
-
-namespace Remoteit
+﻿namespace Remoteit
 {
     public interface IRemoteitClient
     {
-        HttpClient HttpApiClient { get; }
-
         string DeveloperKey { get; }
     }
 }

@@ -41,14 +41,14 @@ namespace Remoteit.Test.RestApi
 
             // Expected behavior of the HTTP request. Verified at the end of the test.
             var expectedHttpMethod = HttpMethod.Post;
-            var expectedApiEndpointUri = new Uri("https://api.remot3.it/apv/v27/device/connect");
+            var expectedApiEndpointUri = new Uri("https://api.remot3.it/apv/v27/user/login");
 
             // Create a test HttpClient that uses the mocked HttpMessageHandler. Creates instance of SUT.
             var testHttpClient = new HttpClient(mockHttpMessageHandler.Object) { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
             var testSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), testHttpClient);
 
             // Execute the SUT: Attempt to create a new session.
-            await testSession.GenerateSession("kyle", "some_developer_key");
+            testSession.CurrentSessionData = await testSession.GenerateSession("kyle", "some_developer_key", "some_dev_key");
 
             // Verify that the request made to the remote.it API was only made once and was the correct method.
             mockHttpMessageHandler.Protected().Verify(
@@ -93,10 +93,10 @@ namespace Remoteit.Test.RestApi
 
             // Expected behavior of the HTTP request. Verified at the end of the test.
             var expectedHttpMethod = HttpMethod.Post;
-            var expectedApiEndpointUri = new Uri("https://api.remot3.it/apv/v27/device/connect");
+            var expectedApiEndpointUri = new Uri("https://api.remot3.it/apv/v27/user/login");
 
             // Execute the SUT: The 401 status code in the API response should trigger an AuthenticationException.
-            await Assert.ThrowsAsync<AuthenticationException>(() => testSession.GenerateSession("kyle", "incorrect_developer_key"));
+            await Assert.ThrowsAsync<AuthenticationException>(() => testSession.GenerateSession("kyle", "incorrect_password", "some_dev_key"));
 
             // Verify that the request made to the remote.it API was only made once and was the correct method.
             mockHttpMessageHandler.Protected().Verify(

@@ -2,10 +2,8 @@
 using Remoteit.Util;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Security.Authentication;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -17,61 +15,36 @@ namespace Remoteit.RestApi
     {
         private IUnixTimeStampCalculator _timeCalculator;
 
-        public HttpClient HttpApiClient { get; set; }
-
-        /// <summary>
-        /// The data for the current API session. Includes the access token used for request authentication.
-        /// </summary>
-        public RemoteitApiSession CurrentSessionData { get; set; }
-
         public RemoteitApiSessionManager(IUnixTimeStampCalculator timeCalculator = null, HttpClient httpClient = null)
         {
             _timeCalculator = timeCalculator ?? new UnixTimeStampCalculator();
-            HttpApiClient = httpClient ?? new HttpClient() { BaseAddress = new System.Uri("https://api.remot3.it/apv/v27") };
+            _httpApiClient = httpClient ?? new HttpClient() { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
         }
 
-        /// <summary>
-        /// Creates a API session by retreiving a new access token from the "/device/connect" API endpoint.
-        /// https://docs.remote.it/api-reference/authentication
-        /// </summary>
-        /// <param name="userName">E-mail for remote.it(or for legacy users, your username)</param>
-        /// <param name="userPassword">Password for remote.it</param>
-        /// <returns>A new RemoteitApiSession instance</returns>
-        public async Task<RemoteitApiSession> GenerateSession(string userName, string userPassword)
-        {
-            var apiEndpoint = new Uri(string.Concat(HttpApiClient.BaseAddress, "/device/connect"));
+        public RemoteitApiSession CurrentSessionData { get; set; }
 
-            var requestBody = new Dictionary<string, string>()
+        private HttpClient _httpApiClient { get; set; }
+
+        public async Task<RemoteitApiSession> GenerateSession(string userName, string userPassword, string developerKey)
+        {
+            string requestBodyJsonData = JsonSerializer.Serialize(new Dictionary<string, string>()
             {
                 { "username", userName },
                 { "password", userPassword }
+            });
+
+            var httpRequest = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(string.Concat(_httpApiClient.BaseAddress, "/user/login")),
+                Content = new StringContent(requestBodyJsonData)
             };
+            httpRequest.Headers.Add("developerkey", developerKey);
 
-            var rawJsonRequestBody = new StringContent(JsonSerializer.Serialize(requestBody));
-
-            try
-            {
-                HttpResponseMessage response = await HttpApiClient.PostAsync(apiEndpoint, rawJsonRequestBody);
-
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    throw new AuthenticationException();
-                }
-
-                var responseBody = await response.Content.ReadAsStringAsync();
-                CurrentSessionData = JsonSerializer.Deserialize<RemoteitApiSession>(responseBody);
-                return CurrentSessionData;
-            }
-            catch (HttpRequestException apiRequestError)
-            {
-                throw new AuthenticationException(apiRequestError.Message);
-            }
+            var sessionData = await new RemoteitApiRequest<RemoteitApiSession>(_httpApiClient).SendAsync(httpRequest);
+            return sessionData;
         }
 
-        /// <summary>
-        /// Compares the current Unix time and the session expiration date to determine wether the current token/session has expired.
-        /// </summary>
-        /// <returns>Wether the session has expires or not.</returns>
         public bool SessionHasExpired()
         {
             if (CurrentSessionData == null)
