@@ -73,7 +73,6 @@ namespace Remoteit.Test.RestApi
             .ThrowsAsync(new HttpRequestException())
             .Verifiable();
 
-            var testHttpClient = new HttpClient(mockHttpMessageHandler.Object) { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
             var httpRequest = new HttpRequestMessage()
             {
                 Method = HttpMethod.Get,

@@ -6,7 +6,5 @@ namespace Remoteit.RestApi
     internal interface IRemoteitApiRequest<T>
     {
         Task<T> SendAsync(HttpRequestMessage httpRequest);
-
-        Task<T> SendAsync(HttpRequestMessage httpRequest, HttpClient httpApiClient);
     }
 }

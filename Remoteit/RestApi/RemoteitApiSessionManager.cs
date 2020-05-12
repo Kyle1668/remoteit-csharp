@@ -27,21 +27,21 @@ namespace Remoteit.RestApi
 
         public async Task<RemoteitApiSession> GenerateSession(string userName, string userPassword, string developerKey)
         {
-            var requestBodyAttributes = new Dictionary<string, string>()
+            string requestBodyJsonData = JsonSerializer.Serialize(new Dictionary<string, string>()
             {
                 { "username", userName },
                 { "password", userPassword }
-            };
+            });
 
             var httpRequest = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(string.Concat(_httpApiClient.BaseAddress, "/user/login")),
-                Content = new StringContent(JsonSerializer.Serialize(requestBodyAttributes))
+                Content = new StringContent(requestBodyJsonData)
             };
             httpRequest.Headers.Add("developerkey", developerKey);
 
-            var sessionData = await new RemoteitApiRequest<RemoteitApiSession>().SendAsync(_httpApiClient, httpRequest);
+            var sessionData = await new RemoteitApiRequest<RemoteitApiSession>(_httpApiClient).SendAsync(httpRequest);
             return sessionData;
         }
 
