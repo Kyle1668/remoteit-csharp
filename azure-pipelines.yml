@@ -37,14 +37,14 @@ jobs:
     inputs:
       command: 'build'
       projects: './$(projectName)/$(projectName).csproj'
-      configuration: '$(buildConfiguration)'
+      configuration: 'Release'
   - task: NuGetCommand@2
     inputs:
       command: 'pack'
       packagesToPack: './$(projectName)/$(projectName).csproj'
       versioningScheme: 'byEnvVar'
       versionEnvVar: 'NugetVersion'
-      configuration: '$(buildConfiguration)'
+      configuration: 'Release'
   - task: NuGetCommand@2
     inputs:
       command: 'push'
