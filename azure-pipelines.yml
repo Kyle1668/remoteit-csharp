@@ -4,13 +4,13 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-  variables:
-    projectName: 'Remoteit'
-    buildConfiguration: 'Release'
-    major: 0
-    minor: 1
-    patch: $[counter(variables['minor'], 0)] #this will reset when we bump minor
-    NugetVersion: $(major).$(minor).$(patch)
+variables:
+  projectName: 'Remoteit'
+  buildConfiguration: 'Release'
+  major: 0
+  minor: 1
+  patch: $[counter(variables['minor'], 0)] #this will reset when we bump minor
+  NugetVersion: $(major).$(minor).$(patch)
 
 jobs:
 - job: Build_and_Test
