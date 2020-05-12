@@ -4,16 +4,35 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'restore'
-      feedsToUse: 'select'
+jobs:
+- job: Build_and_Test
+  steps:
+    - task: DotNetCoreCLI@2
+      name: 'Restore_Solution'
+      inputs:
+        command: 'restore'
+        feedsToUse: 'select'
+    - task: DotNetCoreCLI@2
+      name: 'Build_Solution'
+      inputs:
+        command: 'build'
+    - task: DotNetCoreCLI@2
+      name: 'Run_Unit_Tests'
+      inputs:
+        command: 'test'
 
-  - task: DotNetCoreCLI@2
+- job: Publish_Package
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  steps:
+  - task: NuGetCommand@2
     inputs:
-      command: 'build'
-
-  - task: DotNetCoreCLI@2
+      command: 'pack'
+      packagesToPack: './Remoteit/Remoteit.csproj'
+      versioningScheme: 'off'
+  - task: NuGetCommand@2
     inputs:
-      command: 'test'
+      command: 'push'
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+      nuGetFeedType: 'external'
+      publishFeedCredentials: 'Personal NuGet'
+  
