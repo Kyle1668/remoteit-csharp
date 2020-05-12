@@ -36,11 +36,11 @@ jobs:
   - task: DotNetCoreCLI@2
     inputs:
       command: 'build'
-      projects: '$(projectName)/$(projectName).csproj'
+      projects: './$(projectName)/$(projectName).csproj'
   - task: NuGetCommand@2
     inputs:
       command: 'pack'
-      packagesToPack: '$(projectName)/$(projectName).csproj'
+      packagesToPack: './$(projectName)/$(projectName).csproj'
       versioningScheme: 'byEnvVar'
       versionEnvVar: 'NugetVersion'
   - task: NuGetCommand@2
