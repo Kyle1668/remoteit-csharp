@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <PackageId>remoteit-csharp-client</PackageId>
+    <PackageId>Remoteit.CSharp</PackageId>
     <Authors>Kyle O'Brien</Authors>
     <Description>remote.it C#/.NET Helper Library for .NET Core Framework</Description>
-    <PackageTags>remoteit, IoT, security, dotnet, csharp, core, remot3.it, remote.it, r3.it, r3it</PackageTags>
+    <PackageTags>remote.it, remoteit, IoT, security, dotnet, csharp, core, remot3.it, remote.it, r3.it, r3it</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Kyle1668/remoteit-csharp</RepositoryUrl>
   </PropertyGroup>
