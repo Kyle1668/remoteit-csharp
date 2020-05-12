@@ -67,8 +67,8 @@ namespace Remoteit
             httpRequest.Headers.Add("developerkey", DeveloperKey);
             httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
 
-            var apiRequestSender = new RemoteitApiRequest<ServiceConnectionEndpointResponse>();
-            ServiceConnectionEndpointResponse results = await apiRequestSender.SendAsync(_httpApiClient, httpRequest);
+            var apiRequestSender = new RemoteitApiRequest<ServiceConnectionEndpointResponse>(_httpApiClient);
+            ServiceConnectionEndpointResponse results = await apiRequestSender.SendAsync(httpRequest);
             return results.Connection;
         }
 
@@ -87,8 +87,8 @@ namespace Remoteit
             httpRequest.Headers.Add("developerkey", DeveloperKey);
             httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
 
-            var apiRequestSender = new RemoteitApiRequest<DevicesListEndpointResponse>();
-            DevicesListEndpointResponse results = await apiRequestSender.SendAsync(_httpApiClient, httpRequest);
+            var apiRequestSender = new RemoteitApiRequest<DevicesListEndpointResponse>(_httpApiClient);
+            DevicesListEndpointResponse results = await apiRequestSender.SendAsync(httpRequest);
             return results.Devices;
         }
     }
