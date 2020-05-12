@@ -4,6 +4,14 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+  variables:
+    projectName: 'Remoteit'
+    buildConfiguration: 'Release'
+    major: 0
+    minor: 1
+    patch: $[counter(variables['minor'], 0)] #this will reset when we bump minor
+    NugetVersion: $(major).$(minor).$(patch)
+
 jobs:
 - job: Build_and_Test
   steps:
@@ -28,12 +36,13 @@ jobs:
   - task: DotNetCoreCLI@2
     inputs:
       command: 'build'
-      projects: './Remoteit/Remoteit.csproj'
+      projects: '$(projectName)/$(projectName).csproj'
   - task: NuGetCommand@2
     inputs:
       command: 'pack'
-      packagesToPack: './Remoteit/Remoteit.csproj'
-      versioningScheme: 'byBuildNumber'
+      packagesToPack: '$(projectName)/$(projectName).csproj'
+      versioningScheme: 'byEnvVar'
+      versionEnvVar: 'NugetVersion'
   - task: NuGetCommand@2
     inputs:
       command: 'push'
