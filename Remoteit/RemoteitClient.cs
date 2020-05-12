@@ -45,6 +45,10 @@ namespace Remoteit
 
         private string _userPassword { get; }
 
+        /// <summary>
+        /// Generate a connection to a remote.it device/service. API Documentation: https://docs.remote.it/api-reference/devices/connect
+        /// </summary>
+        /// <param name="deviceAddress">The service address (e.g. service ID) for the device you'd like to connect to.</param>
         public async Task<ServiceConnection> ConnectToService(string deviceAddress)
         {
             if (_isInvalidSession)
@@ -72,6 +76,9 @@ namespace Remoteit
             return results.Connection;
         }
 
+        /// <summary>
+        /// Get a  list of your remote.it devices and data. API Documentation: https://docs.remote.it/api-reference/devices/list
+        /// </summary>
         public async Task<List<RemoteitDevice>> GetDevices()
         {
             if (_isInvalidSession)
