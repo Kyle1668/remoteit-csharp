@@ -74,6 +74,10 @@ namespace Remoteit.Test
             Assert.True(devices[4].DeviceAddress == "80:00:00:00:ZZ:ZZ:ZZ:ZZ");
         }
 
+        /// <summary>
+        /// Test that the session is generated the the function executes when the session is null.
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         public async Task TestAutomaticSessionGeneration()
         {
