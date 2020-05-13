@@ -16,12 +16,12 @@ jobs:
   - job: Build_and_Test
     steps:
       - task: DotNetCoreCLI@2
-        name: "Restore Solution"
+        name: "Restore_Solution"
         inputs:
           command: "restore"
           feedsToUse: "select"
       - task: DotNetCoreCLI@2
-        name: "Build Solution"
+        name: "Build_Solution"
         inputs:
           command: "build"
       - task: DotNetCoreCLI@2
@@ -33,13 +33,13 @@ jobs:
     dependsOn: Build_and_Test
     steps:
       - task: DotNetCoreCLI@2
-        name: "Build Remoteit Class Library"
+        name: "Build_Remoteit_Class_Library"
         inputs:
           command: "build"
           projects: "./$(projectName)/$(projectName).csproj"
           arguments: "--configuration $(buildConfiguration)"
       - task: NuGetCommand@2
-        name: "Pack NuGet Package"
+        name: "Pack_NuGet_Package"
         inputs:
           command: "pack"
           packagesToPack: "./$(projectName)/$(projectName).csproj"
