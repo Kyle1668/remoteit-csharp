@@ -31,9 +31,7 @@ jobs:
 
 - job: Publish_Package
   dependsOn: Build_and_Test
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   steps:
-
   - task: DotNetCoreCLI@2
     inputs:
       command: 'build'
@@ -46,10 +44,3 @@ jobs:
       versioningScheme: 'byEnvVar'
       versionEnvVar: 'NugetVersion'
       configuration: '$(buildConfiguration)'
-  - task: NuGetCommand@2
-    inputs:
-      command: 'push'
-      packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-      nuGetFeedType: 'external'
-      publishFeedCredentials: 'Personal NuGet'
-  
