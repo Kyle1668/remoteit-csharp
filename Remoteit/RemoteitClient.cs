@@ -42,7 +42,7 @@ namespace Remoteit
 
         private bool _isInvalidSession
         {
-            get { return CurrentSession == null || CurrentSession.SessionHasExpired(); }
+            get { return CurrentSession.CurrentSessionData == null || CurrentSession.SessionHasExpired(); }
         }
 
         private string _userName { get; }
