@@ -53,18 +53,23 @@ namespace Remoteit
         /// Generate a connection to a remote.it device/service. API Documentation: https://docs.remote.it/api-reference/devices/connect
         /// </summary>
         /// <param name="deviceAddress">The service address (e.g. service ID) for the device you'd like to connect to.</param>
-        public async Task<ServiceConnection> ConnectToService(string deviceAddress)
+        public async Task<ServiceConnection> ConnectToService(string deviceAddress, string hostIp = null)
         {
             if (_isInvalidSession)
             {
                 CurrentSession.CurrentSessionData = await CurrentSession.GenerateSession(_userName, _userPassword, DeveloperKey);
             }
 
-            string requestBodyJsonData = JsonSerializer.Serialize(new Dictionary<string, dynamic>()
+            var requestBodyAttributes = new Dictionary<string, dynamic>();
+            requestBodyAttributes.Add("deviceaddress", deviceAddress);
+            requestBodyAttributes.Add("wait", true);
+
+            if (!string.IsNullOrEmpty(hostIp))
             {
-                {"deviceaddress",  deviceAddress},
-                {"wait", true }
-            });
+                requestBodyAttributes.Add("hostip", hostIp);
+            }
+
+            string requestBodyJsonData = JsonSerializer.Serialize(requestBodyAttributes);
 
             var httpRequest = new HttpRequestMessage()
             {
