@@ -199,8 +199,8 @@ namespace Remoteit.Test
             var testRemoteitClient = new RemoteitClient("foo@remote.it", "pass123", "X12345", testHttpClient) { CurrentSession = mockSessionManager.Object };
 
             // Test terminating device connection
-            string fakeDeviceAddress = "";
-            string fakeConnectionId = "";
+            string fakeDeviceAddress = "80:00:01:13:XX:XX:XX:YY";
+            string fakeConnectionId = "972ac13a-7169-476b-8fd4-5cd9cddXXXXXX";
             await testRemoteitClient.TerminateDeviceConnection(fakeDeviceAddress, fakeConnectionId);
         }
     }
