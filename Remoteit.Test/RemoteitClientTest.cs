@@ -172,7 +172,7 @@ namespace Remoteit.Test
         }
 
         [Fact]
-        public async Task TestTerminateDeviceConnectionSuccess()
+        public async Task TestTerminateDeviceConnection()
         {
             // Set up Mock of HttpMessageHandler. This allows us to mock the response to the HTTP request.
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
@@ -202,6 +202,18 @@ namespace Remoteit.Test
             string fakeDeviceAddress = "80:00:01:13:XX:XX:XX:YY";
             string fakeConnectionId = "972ac13a-7169-476b-8fd4-5cd9cddXXXXXX";
             await testRemoteitClient.TerminateDeviceConnection(fakeDeviceAddress, fakeConnectionId);
+
+            // Verify that the request made to the remote.it API was only made once and with the correct HTTP method and headers.
+            mockHttpMessageHandler.Protected().Verify(
+                "SendAsync",
+                Times.Exactly(1),
+                ItExpr.Is<HttpRequestMessage>(
+                    req => req.Method == HttpMethod.Post &&
+                           req.RequestUri == new Uri("https://api.remot3.it/apv/v27/device/connect/stop") &&
+                           req.Headers.GetValues("developerkey").FirstOrDefault() == "X12345" &&
+                           req.Headers.GetValues("token").FirstOrDefault() == "f5cce83b0a20d66a4c6710a8327e213d"),
+                ItExpr.IsAny<CancellationToken>()
+            );
         }
     }
 }
