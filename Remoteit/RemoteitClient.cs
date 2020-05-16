@@ -137,9 +137,9 @@ namespace Remoteit
             httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
 
             var apiRequestSender = new RemoteitApiRequest<ConnectionTerminationEndpointResponse>(_httpApiClient);
-            ConnectionTerminationEndpointResponse results = await apiRequestSender.SendAsync(httpRequest);
+            ConnectionTerminationEndpointResponse response = await apiRequestSender.SendAsync(httpRequest);
 
-            if (results.Status != "true")
+            if (response.Status != "true")
             {
                 throw new RemoteitException($"Unable to terminate connection with id {connectionId} to device {deviceAddress}.");
             }

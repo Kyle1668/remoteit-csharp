@@ -1,7 +1,13 @@
-﻿namespace Remoteit.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Remoteit.Models
 {
     internal class ConnectionTerminationEndpointResponse
     {
-        public string Status { get; internal set; }
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
+
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
     }
 }
