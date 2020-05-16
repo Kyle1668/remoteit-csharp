@@ -107,5 +107,15 @@ namespace Remoteit
             DevicesListEndpointResponse results = await apiRequestSender.SendAsync(httpRequest);
             return results.Devices;
         }
+
+        /// <summary>
+        /// Terminate a proxy connection to a device.
+        /// </summary>
+        /// <param name="deviceAddress">The service address(e.g.service ID) for the device you connected to, but now you want to terminate the proxy for that connection.</param>
+        /// <param name="connectionId">The connection ID returned from the /device/connect API call</param>
+        public Task TerminateDeviceConnection(string deviceAddress, string connectionId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
