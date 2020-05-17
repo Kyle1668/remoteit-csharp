@@ -1,4 +1,4 @@
-﻿using Remoteit.Models;
+﻿using Remoteit.Types;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 

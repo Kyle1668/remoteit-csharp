@@ -1,4 +1,4 @@
-﻿using Remoteit.Models;
+﻿using Remoteit.Types;
 using Remoteit.Util;
 using System;
 using System.Collections.Generic;
@@ -49,7 +49,7 @@ namespace Remoteit.RestApi
         {
             if (CurrentSessionData == null)
             {
-                throw new InvalidOperationException("Unable to check is the session has expired since there is no current session.");
+                throw new RemoteitClientOperationException("Unable to check is the session has expired since there is no current session.");
             }
 
             return CurrentSessionData.TokenExpirationDate <= _timeCalculator.Calculate();

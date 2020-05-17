@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 [assembly: InternalsVisibleTo("Remoteit.Test")]
 
-namespace Remoteit.Models
+namespace Remoteit.Types
 {
     internal class ServiceConnectionEndpointResponse
     {

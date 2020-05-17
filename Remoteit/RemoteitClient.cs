@@ -1,6 +1,6 @@
 ﻿using Remoteit.Exceptions;
-using Remoteit.Models;
 using Remoteit.RestApi;
+using Remoteit.Types;
 using Remoteit.Util;
 using System;
 using System.Collections.Generic;

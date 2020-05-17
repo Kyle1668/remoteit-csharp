@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Remoteit.Models
+namespace Remoteit.Types
 {
     public class RemoteitDevice
     {
