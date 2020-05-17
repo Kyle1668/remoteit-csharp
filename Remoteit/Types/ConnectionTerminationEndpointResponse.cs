@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Remoteit.Models
+namespace Remoteit.Types
 {
     internal class ConnectionTerminationEndpointResponse
     {

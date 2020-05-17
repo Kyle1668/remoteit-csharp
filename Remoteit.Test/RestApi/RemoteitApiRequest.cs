@@ -1,6 +1,5 @@
 ﻿using Moq;
 using Moq.Protected;
-using Remoteit.Models;
 using Remoteit.RestApi;
 using Remoteit.Exceptions;
 using System;
@@ -10,6 +9,7 @@ using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using Remoteit.Types;
 
 namespace Remoteit.Test.RestApi
 {

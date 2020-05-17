@@ -1,7 +1,7 @@
 ﻿using Moq;
 using Moq.Protected;
-using Remoteit.Models;
 using Remoteit.RestApi;
+using Remoteit.Types;
 using System;
 using System.Linq;
 using System.Net;
