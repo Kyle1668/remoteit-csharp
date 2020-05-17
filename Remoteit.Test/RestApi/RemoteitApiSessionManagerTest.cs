@@ -4,6 +4,9 @@ using Remoteit.Exceptions;
 using Remoteit.RestApi;
 using Remoteit.Types;
 using Remoteit.Util;
+
+using Remoteit.Exceptions;
+
 using System;
 using System.Net;
 using System.Net.Http;
@@ -117,7 +120,7 @@ namespace Remoteit.Test.RestApi
         {
             var testSession = new RemoteitApiSessionManager(new UnixTimeStampCalculator(), new HttpClient());
 
-            Assert.Throws<InvalidOperationException>(() =>
+            Assert.Throws<RemoteitClientOperationException>(() =>
             {
                 testSession.SessionHasExpired();
             });
