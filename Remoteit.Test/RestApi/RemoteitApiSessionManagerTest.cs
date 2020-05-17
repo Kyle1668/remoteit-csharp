@@ -1,5 +1,6 @@
 ﻿using Moq;
 using Moq.Protected;
+using Remoteit.Exceptions;
 using Remoteit.Models;
 using Remoteit.RestApi;
 using Remoteit.Util;
@@ -96,7 +97,7 @@ namespace Remoteit.Test.RestApi
             var expectedApiEndpointUri = new Uri("https://api.remot3.it/apv/v27/user/login");
 
             // Execute the SUT: The 401 status code in the API response should trigger an AuthenticationException.
-            await Assert.ThrowsAsync<AuthenticationException>(() => testSession.GenerateSession("kyle", "incorrect_password", "some_dev_key"));
+            await Assert.ThrowsAsync<RemoteitException>(() => testSession.GenerateSession("kyle", "incorrect_password", "some_dev_key"));
 
             // Verify that the request made to the remote.it API was only made once and was the correct method.
             mockHttpMessageHandler.Protected().Verify(

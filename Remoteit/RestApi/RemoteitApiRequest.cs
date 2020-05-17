@@ -2,6 +2,7 @@
 using System.Security.Authentication;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Remoteit.Exceptions;
 
 namespace Remoteit.RestApi
 {
@@ -26,11 +27,11 @@ namespace Remoteit.RestApi
                     return JsonSerializer.Deserialize<T>(rawResponseBody);
                 }
 
-                throw new AuthenticationException(rawResponseBody);
+                throw new RemoteitException(rawResponseBody);
             }
             catch (HttpRequestException apiRequestError)
             {
-                throw new AuthenticationException(apiRequestError.Message);
+                throw new RemoteitException(apiRequestError.Message);
             }
         }
     }
