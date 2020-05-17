@@ -1,4 +1,5 @@
-﻿using Remoteit.Models;
+﻿using Remoteit.Exceptions;
+using Remoteit.Models;
 using Remoteit.RestApi;
 using Remoteit.Util;
 using System;
@@ -106,6 +107,42 @@ namespace Remoteit
             var apiRequestSender = new RemoteitApiRequest<DevicesListEndpointResponse>(_httpApiClient);
             DevicesListEndpointResponse results = await apiRequestSender.SendAsync(httpRequest);
             return results.Devices;
+        }
+
+        /// <summary>
+        /// Terminate a proxy connection to a device.
+        /// </summary>
+        /// <param name="deviceAddress">The service address(e.g.service ID) for the device you connected to, but now you want to terminate the proxy for that connection.</param>
+        /// <param name="connectionId">The connection ID returned from the /device/connect API call</param>
+        public async Task TerminateDeviceConnection(string deviceAddress, string connectionId)
+        {
+            if (_isInvalidSession)
+            {
+                CurrentSession.CurrentSessionData = await CurrentSession.GenerateSession(_userName, _userPassword, DeveloperKey);
+            }
+
+            string requestBodyJsonData = JsonSerializer.Serialize(new Dictionary<string, string>()
+            {
+                {"deviceaddress", deviceAddress },
+                {"connectionid", connectionId }
+            });
+
+            var httpRequest = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(string.Concat(_httpApiClient.BaseAddress, "/device/connect/stop")),
+                Content = new StringContent(requestBodyJsonData)
+            };
+            httpRequest.Headers.Add("developerkey", DeveloperKey);
+            httpRequest.Headers.Add("token", CurrentSession.CurrentSessionData.Token);
+
+            var apiRequestSender = new RemoteitApiRequest<ConnectionTerminationEndpointResponse>(_httpApiClient);
+            ConnectionTerminationEndpointResponse response = await apiRequestSender.SendAsync(httpRequest);
+
+            if (response.Status != "true")
+            {
+                throw new RemoteitException($"Unable to terminate connection with id {connectionId} to device {deviceAddress}.");
+            }
         }
     }
 }

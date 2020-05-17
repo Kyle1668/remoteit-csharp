@@ -2,6 +2,7 @@
 using Moq.Protected;
 using Remoteit.Models;
 using Remoteit.RestApi;
+using Remoteit.Exceptions;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -46,7 +47,7 @@ namespace Remoteit.Test.RestApi
                 RequestUri = expectedApiEndpointUri
             };
 
-            await Assert.ThrowsAsync<AuthenticationException>(async () =>
+            await Assert.ThrowsAsync<RemoteitException>(async () =>
              {
                  var testRequest = new RemoteitApiRequest<DevicesListEndpointResponse>(testHttpClient);
                  await testRequest.SendAsync(httpRequest);
@@ -79,7 +80,7 @@ namespace Remoteit.Test.RestApi
                 RequestUri = new Uri("https://api.remot3.it/apv/v27/device/list/all")
             };
 
-            await Assert.ThrowsAsync<AuthenticationException>(async () =>
+            await Assert.ThrowsAsync<RemoteitException>(async () =>
             {
                 var testRequest = new RemoteitApiRequest<DevicesListEndpointResponse>();
                 await testRequest.SendAsync(httpRequest);

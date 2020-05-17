@@ -170,5 +170,50 @@ namespace Remoteit.Test
             Assert.True(testConnectionData.DeviceAddress == fakeDeviceAddress);
             Assert.True(testConnectionData.ConnectionId == "972ac13a-7169-476b-8fd4-5cd9cdd9924a");
         }
+
+        [Fact]
+        public async Task TestTerminateDeviceConnection()
+        {
+            // Set up Mock of HttpMessageHandler. This allows us to mock the response to the HTTP request.
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>
+            (
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Post && req.RequestUri == new Uri("https://api.remot3.it/apv/v27/device/connect/stop")),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            .ReturnsAsync(new HttpResponseMessage()
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent("{ \"status\": \"true\", \"id\": \"b01363de-8d20-40c8-XYXYXY-1acfb0f1303d\" }")
+            })
+            .Verifiable();
+
+            // Set up mock of the session data. This will prevent autorefreshing the sesison token which is outside the scope of this test.
+            var mockSessionManager = new Mock<IRemoteitApiSessionManager>();
+            mockSessionManager.Setup(session => session.SessionHasExpired()).Returns(false).Verifiable();
+            mockSessionManager.Setup(session => session.CurrentSessionData).Returns(new RemoteitApiSession() { Token = "f5cce83b0a20d66a4c6710a8327e213d" }).Verifiable();
+
+            // Create a test HttpClient that uses the mocked HttpMessageHandler. Creates instance of SUT.
+            var testHttpClient = new HttpClient(mockHttpMessageHandler.Object) { BaseAddress = new Uri("https://api.remot3.it/apv/v27") };
+            var testRemoteitClient = new RemoteitClient("foo@remote.it", "pass123", "X12345", testHttpClient) { CurrentSession = mockSessionManager.Object };
+
+            // Test terminating device connection
+            string fakeDeviceAddress = "80:00:01:13:XX:XX:XX:YY";
+            string fakeConnectionId = "972ac13a-7169-476b-8fd4-5cd9cddXXXXXX";
+            await testRemoteitClient.TerminateDeviceConnection(fakeDeviceAddress, fakeConnectionId);
+
+            // Verify that the request made to the remote.it API was only made once and with the correct HTTP method and headers.
+            mockHttpMessageHandler.Protected().Verify(
+                "SendAsync",
+                Times.Exactly(1),
+                ItExpr.Is<HttpRequestMessage>(
+                    req => req.Method == HttpMethod.Post &&
+                           req.RequestUri == new Uri("https://api.remot3.it/apv/v27/device/connect/stop") &&
+                           req.Headers.GetValues("developerkey").FirstOrDefault() == "X12345" &&
+                           req.Headers.GetValues("token").FirstOrDefault() == "f5cce83b0a20d66a4c6710a8327e213d"),
+                ItExpr.IsAny<CancellationToken>()
+            );
+        }
     }
 }
