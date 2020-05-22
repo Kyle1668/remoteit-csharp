@@ -19,12 +19,12 @@ namespace Remoteit
     public class RemoteitClient : IRemoteitClient
     {
         /// <summary>
-        ///
+        /// Creates a new instance of the remote.it client.
         /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
+        /// <param name="userName">E-mail for remote.it (or for legacy users, your username)</param>
+        /// <param name="password">Password for remote.it</param>
         /// <param name="developerKey">Your developer key which can be found by logging into remote.it and going to your "Account" settings page.</param>
-        /// <param name="requestClient"></param>
+        /// <param name="requestClient">An optional user-defined http client</param>
         public RemoteitClient(string userName, string password, string developerKey, HttpClient requestClient = null)
         {
             _userName = userName;

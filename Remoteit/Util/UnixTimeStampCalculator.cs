@@ -6,7 +6,7 @@ namespace Remoteit.Util
     {
         public long Calculate()
         {
-            return DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            return DateTimeOffset.Now.ToUnixTimeSeconds();
         }
     }
 }
