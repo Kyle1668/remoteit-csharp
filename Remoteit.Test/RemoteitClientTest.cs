@@ -133,26 +133,5 @@ namespace Remoteit.Test
                    ItExpr.IsAny<CancellationToken>()
                );
         }
-
-        [Fact]
-        public async void DocsTest()
-        {
-            var remoteitUsername = "kyledevinobrien1@gmail.com";
-            var remoteitPassword = "kf4krH7kkB9bkRDxSDsNLbfpjFJi";
-            var remoteitDevKey = "MkY4NjEwRUQtRERGOC00NjA5LTkzMEQtRkZEMzJBRTNEMjI0";
-
-            var remoteitClient = new RemoteitClient(remoteitUsername, remoteitPassword, remoteitDevKey);
-            string deviceAddress = "80:00:00:00:01:04:80:05";
-
-
-            // Create a device connection
-            ServiceConnection connectionData = await remoteitClient.ConnectToService(deviceAddress);
-
-            // Get the connection's ID from the service connection object.
-            string connectionId = connectionData.ConnectionId;
-
-            // Terminate the connection. An exception is thrown if the termination is unsucesful. 
-            await remoteitClient.TerminateDeviceConnection(deviceAddress, connectionId);
-        }
     }
 }
