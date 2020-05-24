@@ -26,6 +26,11 @@ From within Visual Studio, you can use the NuGet GUI to search for and install t
 ### Authentication
 
 ```csharp
+var remoteitUsername = Environment.GetEnvironmentVariable("REMOTEIT_USERNAME");
+var remoteitPassword = Environment.GetEnvironmentVariable("REMOTEIT_PASSWORD");
+var remoteitDevKey = Environment.GetEnvironmentVariable("REMOTEIT_DEVELOPER_KEY");
+
+var remoteitClient = new RemoteitClient(remoteitUsername, remoteitPassword, remoteitDevKey);
 ```
 
 After authentication, you can list your devices, connect to them, and terminate device connections.
@@ -33,6 +38,9 @@ After authentication, you can list your devices, connect to them, and terminate 
 ### Listing Your Devices
 
 ```csharp
+var remoteitClient = new RemoteitClient(remoteitUsername, remoteitPassword, remoteitDevKey);
+
+List<RemoteitDevice> devices = await remoteitClient.GetDevices();
 ```
 
 ### Connecting to a Device
