@@ -143,13 +143,13 @@ namespace Remoteit.Test
 
             var remoteitClient = new RemoteitClient(remoteitUsername, remoteitPassword, remoteitDevKey);
 
+            ServiceConnection connectionData = await remoteitClient.ConnectToService("80:00:00:00:01:XX:XX:XX");
 
 
-            var connectionData = await remoteitClient.ConnectToService("80:00:00:00:01:04:80:05");
+            string deviceAddress = "80:00:00:00:01:XX:XX:XX";
+            string connectionId = connectionData.ConnectionId;
 
-            var connectionUrl = connectionData.Proxy;
-
-
+            await remoteitClient.TerminateDeviceConnection(deviceAddress, connectionId);
         }
     }
 }

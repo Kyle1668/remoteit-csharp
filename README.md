@@ -50,14 +50,28 @@ var remoteitClient = new RemoteitClient(remoteitUsername, remoteitPassword, remo
 
 var deviceAddress = "80:00:00:00:01:XX:XX:XX";
 
+// Create a device connection
 ServiceConnection connectionData = await remoteitClient.ConnectToService(deviceAddress);
 
-string connectionUrl = connectionData.Proxy; // https://XXXasnap.p18.rt3.io/
+// Example: https://XXXasnap.p18.rt3.io/
+string connectionUrl = connectionData.Proxy;
 ```
 
 ### Terminating a Device Connection
 
 ```csharp
+var remoteitClient = new RemoteitClient(remoteitUsername, remoteitPassword, remoteitDevKey);
+
+string deviceAddress = "80:00:00:00:01:XX:XX:XX";
+
+// Create a device connection
+ServiceConnection connectionData = await remoteitClient.ConnectToService(deviceAddress);
+
+// Get the connection's ID from the service connection object.
+string connectionId = connectionData.ConnectionId;
+
+// Terminate the connection. An exception is thrown if the termination is unsucesful.
+await remoteitClient.TerminateDeviceConnection(deviceAddress, connectionId);
 ```
 
 ## Development
