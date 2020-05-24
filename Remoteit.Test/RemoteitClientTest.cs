@@ -142,13 +142,16 @@ namespace Remoteit.Test
             var remoteitDevKey = "MkY4NjEwRUQtRERGOC00NjA5LTkzMEQtRkZEMzJBRTNEMjI0";
 
             var remoteitClient = new RemoteitClient(remoteitUsername, remoteitPassword, remoteitDevKey);
+            string deviceAddress = "80:00:00:00:01:04:80:05";
 
-            ServiceConnection connectionData = await remoteitClient.ConnectToService("80:00:00:00:01:XX:XX:XX");
 
+            // Create a device connection
+            ServiceConnection connectionData = await remoteitClient.ConnectToService(deviceAddress);
 
-            string deviceAddress = "80:00:00:00:01:XX:XX:XX";
+            // Get the connection's ID from the service connection object.
             string connectionId = connectionData.ConnectionId;
 
+            // Terminate the connection. An exception is thrown if the termination is unsucesful. 
             await remoteitClient.TerminateDeviceConnection(deviceAddress, connectionId);
         }
     }
