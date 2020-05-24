@@ -33,7 +33,7 @@ var remoteitDevKey = Environment.GetEnvironmentVariable("REMOTEIT_DEVELOPER_KEY"
 var remoteitClient = new RemoteitClient(remoteitUsername, remoteitPassword, remoteitDevKey);
 ```
 
-After authentication, you can list your devices, connect to them, and terminate device connections.
+After authenticating, you can list your devices, connect to them, and terminate device connections.
 
 ### Listing Your Devices
 
@@ -46,6 +46,13 @@ List<RemoteitDevice> devices = await remoteitClient.GetDevices();
 ### Connecting to a Device
 
 ```csharp
+var remoteitClient = new RemoteitClient(remoteitUsername, remoteitPassword, remoteitDevKey);
+
+var deviceAddress = "80:00:00:00:01:XX:XX:XX";
+
+ServiceConnection connectionData = await remoteitClient.ConnectToService(deviceAddress);
+
+string connectionUrl = connectionData.Proxy; // https://XXXasnap.p18.rt3.io/
 ```
 
 ### Terminating a Device Connection

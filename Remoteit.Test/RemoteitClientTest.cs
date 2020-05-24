@@ -133,5 +133,23 @@ namespace Remoteit.Test
                    ItExpr.IsAny<CancellationToken>()
                );
         }
+
+        [Fact]
+        public async void DocsTest()
+        {
+            var remoteitUsername = "kyledevinobrien1@gmail.com";
+            var remoteitPassword = "kf4krH7kkB9bkRDxSDsNLbfpjFJi";
+            var remoteitDevKey = "MkY4NjEwRUQtRERGOC00NjA5LTkzMEQtRkZEMzJBRTNEMjI0";
+
+            var remoteitClient = new RemoteitClient(remoteitUsername, remoteitPassword, remoteitDevKey);
+
+
+
+            var connectionData = await remoteitClient.ConnectToService("80:00:00:00:01:04:80:05");
+
+            var connectionUrl = connectionData.Proxy;
+
+
+        }
     }
 }
