@@ -8,6 +8,6 @@
     <PackageTags>remote.it, remoteit, IoT, security, dotnet, csharp, core, remot3.it, remote.it, r3.it, r3it</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Kyle1668/remoteit-csharp</RepositoryUrl>
-    <!-- <Version>1.0.1-alpha</Version> -->
+    <Version>1.0.2</Version>
   </PropertyGroup>
 </Project>
