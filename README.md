@@ -5,6 +5,8 @@
 
 remoteit-csharp is an open-source C# client for the [remote.it REST API](https://docs.remote.it/api-reference/overview). With this package, you can programmatically list and securely connect to your remote.it devices. This client is distributed as a NuGet package targeting the .NET Core framework.
 
+Anyone is welcome to contribute to this project. Feel free to make any issues and pull-requests.
+
 ## Installation
 
 ### Using the .NET Core Command Line Tools
@@ -43,8 +45,22 @@ After authentication, you can list your devices, connect to them, and terminate 
 ```csharp
 ```
 
-## Testing
+## Development
 
-Lorme Ipsum
+### Dependencies
 
+You can install the project's dependencies by running `dotnet restore` in the project root.
 
+### Testing
+
+All tests are located in the `Remoteit.Test` project. The testing libraries used for this project are [xUnit](https://xunit.net/) and [Moq](https://www.nuget.org/packages/Moq).
+
+Continues integration is done through Azure Pipelines. The `azure-pipelines.yml` file configures this pipeline. [Pipeline Link](https://dev.azure.com/kyledevinobrien/remoteit-csharp/_build?definitionId=8&_a=summary)
+
+## Authors
+
+* **Kyle O'Brien** - *Initial work* - [LinkedIn](https://www.linkedin.com/in/kyle1668/)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
