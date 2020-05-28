@@ -19,7 +19,7 @@ If you are building with the .NET Core command-line tools, you can run the follo
 
 From within Visual Studio, you can use the NuGet GUI to search for and install the Remoteit NuGet package. Alternatively, you can use the built-in package manager console and write the following command.
 
-`Install-Package Twilio`
+`Install-Package Remoteit`
 
 ## Usage
 
