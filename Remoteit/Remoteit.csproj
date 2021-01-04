@@ -1,13 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <PackageId>Remoteit</PackageId>
     <Authors>Kyle O'Brien</Authors>
     <Description>remote.it C#/.NET Helper Library for .NET Core Framework</Description>
     <PackageTags>remote.it, remoteit, IoT, security, dotnet, csharp, core, remot3.it, remote.it, r3.it, r3it</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Kyle1668/remoteit-csharp</RepositoryUrl>
-    <Version>1.0.2</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 </Project>
